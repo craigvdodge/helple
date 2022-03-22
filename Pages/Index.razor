@@ -1,8 +1,189 @@
 ﻿@page "/"
 
-<PageTitle>Index</PageTitle>
+<PageTitle>Helple</PageTitle>
 
-<h1>Hello, world!</h1>
+<h1>Helple Word List</h1>
 
-Welcome to your new app.
+<div>
+    <label>@ErrMsg</label>
+</div>
+<div hidden="@hideGuessBtn">
+    <button @onclick="OnGuessBtnClick">Filter list with guess</button>
+</div>
+<div hidden="@hideGuessInput">
+    <label>Enter guess to filter word list:</label>
+    <input @bind="Guess" /><button @onclick="OnGuessClick">enter</button>
+</div>
+<div hidden="@hideGuessColorPicker">
+    <div>
+        <label>@ColorCodingArray[0].Letter</label>
+        <select @bind="cc0">
+            @foreach (var value in Enum.GetValues<ColorCode>())
+            {
+                <option>@value.ToString()</option>
+            }
+        </select>
+    </div>
+    <div>
+        <label>@ColorCodingArray[1].Letter</label>
+        <select @bind="cc1">
+            @foreach (var value in Enum.GetValues<ColorCode>())
+            {
+                <option>@value.ToString()</option>
+            }
+        </select>
+    </div>
+    <div>
+        <label>@ColorCodingArray[2].Letter</label>
+        <select @bind="cc2">
+            @foreach (var value in Enum.GetValues<ColorCode>())
+            {
+                <option>@value.ToString()</option>
+            }
+        </select>
+    </div>
+    <div>
+        <label>@ColorCodingArray[3].Letter</label>
+        <select @bind="cc3">
+            @foreach (var value in Enum.GetValues<ColorCode>())
+            {
+                <option>@value.ToString()</option>
+            }
+        </select>
+    </div>
+    <div>
+        <label>@ColorCodingArray[4].Letter</label>
+        <select @bind="cc4">
+            @foreach (var value in Enum.GetValues<ColorCode>())
+            {
+                <option>@value.ToString()</option>
+            }
+        </select>
+    </div>
+    <button @onclick="OnColorCodeClick">Filter list</button>
+</div>
+<div>
+    <p>Word Suggestions</p>
+    <select size=20>
+        <option>spear</option>
+    </select>
+</div>
 
+@code {
+    // This is hella stupid, but I couldn't figure out how to bind the dropdown refering to an array memember. Brute force ftw.
+    public ColorCode cc0;
+    public ColorCode cc1;
+    public ColorCode cc2;
+    public ColorCode cc3;
+    public ColorCode cc4;
+
+    // "select" means user has not entered color code yet
+    public enum ColorCode
+    {
+        Select=0,
+        Black,
+        Yellow,
+        Green
+    }
+
+    public class ColorCodingInfo
+    {
+        public ColorCodingInfo(string letter, Int32 index)
+        {
+            Letter = letter;
+            Index = index;
+            Code = ColorCode.Select;
+        }
+        public string Letter { get; set; }
+        public Int32 Index { get; set; }
+        public ColorCode Code { get; set; }
+    }
+
+    public ColorCodingInfo[] ColorCodingArray = InitColorCodingArray();
+
+    public static ColorCodingInfo[] InitColorCodingArray()
+    {
+        ColorCodingInfo[] retval = new ColorCodingInfo[5];
+        for (int i=0; i<5; i++)
+        {
+            retval[i] = new ColorCodingInfo(string.Empty, i);
+        }
+
+        return retval;
+    }
+
+    private string? Guess { get; set; }
+    private void OnGuessClick()
+    {
+        if (Guess == null || Guess.Length != 5)
+        {
+            ErrMsg = "Guess must be 5 characters.";
+            return;
+        }
+        // TODO: more checking here
+        ErrMsg = null;
+        hideGuessColorPicker = false;
+        hideGuessInput = true;
+
+        // xfer Guess to ColorCodingInfo array
+        for (int i=0; i<5; i++)
+        {
+            ColorCodingArray[i].Letter = Guess.Substring(i, 1);
+            ColorCodingArray[i].Code = ColorCode.Select;
+        }
+
+    }
+    private string? ErrMsg;
+    private bool hideGuessColorPicker = true;
+    private bool hideGuessInput = true;
+    private bool hideGuessBtn = false;
+
+    private void OnGuessBtnClick()
+    {
+        Console.WriteLine("Why hello there!");
+        hideGuessBtn = true;
+        hideGuessInput = false;
+    }
+
+    private void OnColorCodeClick()
+    {
+        // xfer codes from ccx variables to ColorCodingArray
+        ColorCodingArray[0].Code = cc0;
+        ColorCodingArray[1].Code = cc1;
+        ColorCodingArray[2].Code = cc2;
+        ColorCodingArray[3].Code = cc3;
+        ColorCodingArray[4].Code = cc4;
+
+        // Validation
+
+        for (int i=0; i<5; i++)
+        {
+            Console.WriteLine(i.ToString() + ":" + ColorCodingArray[i].Code.ToString());
+            if (ColorCodingArray[i].Code == ColorCode.Select)
+            {
+                ErrMsg = ColorCodingArray[i].Letter + " color not selected";
+                return;
+            }
+        }
+
+        ErrMsg = string.Empty;
+
+        // TODO: Filter word list
+
+        // Clean up 
+        hideGuessColorPicker = true;
+        hideGuessBtn = false;
+        Guess = null;
+        foreach (ColorCodingInfo cci in ColorCodingArray)
+        {
+            cci.Letter = string.Empty;
+            cci.Code = ColorCode.Select;
+        }
+        cc0 = ColorCode.Select;
+        cc1 = ColorCode.Select;
+        cc2 = ColorCode.Select;
+        cc3 = ColorCode.Select;
+        cc4 = ColorCode.Select;
+    }
+
+}
