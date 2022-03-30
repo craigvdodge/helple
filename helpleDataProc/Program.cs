@@ -46,10 +46,15 @@ File.AppendAllLines(args[1], outputList.Keys);
 
 // report stats
 Console.WriteLine("Total final words: " + outputList.Count);
+Console.WriteLine("Total characters: " + charsTotal.ToString());
 Console.WriteLine("Total rejected words: " + rejections);
 Console.WriteLine("Character Counts:");
+double percent = 0.0;
+double dblTotalChars = Convert.ToDouble(charsTotal);
 foreach (char c in charCount.Keys)
 {
-    Console.WriteLine(c + ": " + charCount[c].ToString());
+    percent = Convert.ToDouble(charCount[c]) / dblTotalChars;
+    percent = percent * 100;
+    percent = Math.Round(percent, 4);
+    Console.WriteLine(c + ": " + charCount[c].ToString() + " (" + percent.ToString() + "%)");
 }
-Console.WriteLine("Total characters: " + charsTotal.ToString());
