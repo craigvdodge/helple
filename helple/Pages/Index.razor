@@ -65,7 +65,7 @@
 <div>
     <p>Word Suggestions</p>
     <select size=20>
-        <option>spear</option>
+        <option>SPEAR</option>
     </select>
 </div>
 
@@ -124,6 +124,7 @@
         ErrMsg = null;
         hideGuessColorPicker = false;
         hideGuessInput = true;
+        Guess = Guess.ToUpper();
 
         // xfer Guess to ColorCodingInfo array
         for (int i=0; i<5; i++)
