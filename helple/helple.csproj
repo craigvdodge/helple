@@ -11,4 +11,8 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.3" PrivateAssets="all" />
   </ItemGroup>
 
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="$(ProjectDir)\..\helpleDataProc\bin\$(ConfigurationName)\$(TargetFramework)\helpleDataProc.exe $(ProjectDir)\..\helpleDataProc\bin\$(ConfigurationName)\$(TargetFramework)\words_raw.txt $(ProjectDir)\$(OutDir)\words.txt" />
+  </Target>
+
 </Project>

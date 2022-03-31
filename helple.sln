@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.1.32228.430
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "helple", "helple\helple.csproj", "{AE113C37-5432-4A84-8737-FDAB435E8B23}"
+	ProjectSection(ProjectDependencies) = postProject
+		{407E748F-B661-4609-96F3-6A5E4B0B773C} = {407E748F-B661-4609-96F3-6A5E4B0B773C}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "helpleDataProc", "helpleDataProc\helpleDataProc.csproj", "{407E748F-B661-4609-96F3-6A5E4B0B773C}"
 EndProject

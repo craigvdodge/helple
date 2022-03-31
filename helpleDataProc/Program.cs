@@ -3,7 +3,7 @@ if (args.Length < 2)
 {
     Console.WriteLine("Helple Data Processor");
     Console.WriteLine("Usage: helpleDataProc input-file output-file");
-    return;
+    return -1;
 }
 
 string[] words = File.ReadAllLines(args[0]);
@@ -58,3 +58,4 @@ foreach (char c in charCount.Keys)
     percent = Math.Round(percent, 4);
     Console.WriteLine(c + ": " + charCount[c].ToString() + " (" + percent.ToString() + "%)");
 }
+return 0;
