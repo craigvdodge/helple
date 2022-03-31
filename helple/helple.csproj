@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -9,10 +9,11 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.3" PrivateAssets="all" />
+	<Content Include="$(OutDir)\wwwroot\words.txt" Link="wwwroot\words.txt" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="$(ProjectDir)\..\helpleDataProc\bin\$(ConfigurationName)\$(TargetFramework)\helpleDataProc.exe $(ProjectDir)\..\helpleDataProc\bin\$(ConfigurationName)\$(TargetFramework)\words_raw.txt $(ProjectDir)\$(OutDir)\words.txt" />
+    <Exec Command="$(ProjectDir)\..\helpleDataProc\bin\$(ConfigurationName)\$(TargetFramework)\helpleDataProc.exe $(ProjectDir)\..\helpleDataProc\bin\$(ConfigurationName)\$(TargetFramework)\words_raw.txt $(ProjectDir)\$(OutDir)\wwwroot\words.txt" />
   </Target>
 
 </Project>
