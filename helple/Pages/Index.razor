@@ -6,7 +6,7 @@
 
 <div>
     <label>@ErrMsg</label>
-    <label @onload="ReadWordsFile">@test</label>
+    <label @onload="ReadWordsFile">@Message</label>
 </div>
 <div hidden="@hideGuessBtn">
     <button @onclick="OnGuessBtnClick">Filter list with guess</button>
@@ -197,9 +197,8 @@
     public List<string> Wordlist = new List<string>();
     public string SelectedWord = string.Empty;
 
-    private async void ReadWordsFile()
+    private async Task<bool> ReadWordsFile()
     {
-        test = "enter";
         try
         {
             var foo = _client.GetStringAsync("words.txt");
@@ -210,43 +209,25 @@
             {
                 Wordlist.Add(w);
             }
-
-            test = "after await";
-            Console.WriteLine("after await");
-            //Wordlist.Add("hello");
-            //Console.WriteLine(foo.Result);
-
+            Message = string.Empty;
+            return true;
         }
         catch (Exception e)
         {
+            Message = "Error loading word list.";
             Console.WriteLine(e.Message);
+            Task failed = Task.CompletedTask;
+            return false;
         }
-        finally
-        {
-            test = "finally";
-        }
-        test = "outside";
-    }
-
-    void SomeStartupMethod()
-    {
-        ReadWordsFile();
-    }
-
-    Task SomeStartupTask()
-    {
-        // Do some task based work
-        return Task.CompletedTask;
     }
 
     protected override async Task OnInitializedAsync()
     {
-        Wordlist.Add("Please wait");
-        
-        SomeStartupMethod();
-        await SomeStartupTask();
+        Message = "Loading word list...";
+
+        bool loadSuccess = await ReadWordsFile();
     }
 
-    private string test = "Initalize text";
+    private string Message = string.Empty;
 
 }
