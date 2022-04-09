@@ -13,8 +13,12 @@
 
   <ItemGroup>
     <Content Include="words_raw.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="$(ProjectDir)\$(OutDir)\helpleDataProc.exe $(ProjectDir)\words_raw.txt $(ProjectDir)\..\helple\wwwroot\words.txt" />
+  </Target>
 
 </Project>

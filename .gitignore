@@ -452,3 +452,8 @@ $RECYCLE.BIN/
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+
+# This file gets built by helpleDataProc and becomes content for helple.
+# Shouldn't be checked in.
+
+helple/wwwroot/words.txt
