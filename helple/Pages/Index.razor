@@ -217,7 +217,7 @@
         {
             var foo = _client.GetStringAsync("words.txt");
             await foo;
-            string[] wordsTemp = foo.Result.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
+            string[] wordsTemp = foo.Result.Split(',', StringSplitOptions.RemoveEmptyEntries);
             Wordlist.Clear();
             foreach (string w in wordsTemp)
             {

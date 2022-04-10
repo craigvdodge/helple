@@ -42,7 +42,13 @@ if (File.Exists(args[1]))
 {
     File.Delete(args[1]);
 }
-File.AppendAllLines(args[1], outputList.Keys);
+using (StreamWriter sw = File.CreateText(args[1]))
+{ 
+    foreach (string k in outputList.Keys)
+    {
+        sw.Write(k + ',');
+    }
+}
 
 // report stats
 Console.WriteLine("Total final words: " + outputList.Count);
