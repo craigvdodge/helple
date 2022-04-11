@@ -102,14 +102,12 @@
 
     public class ColorCodingInfo
     {
-        public ColorCodingInfo(string letter, Int32 index)
+        public ColorCodingInfo(string letter)
         {
             Letter = letter;
-            Index = index;
             Code = ColorCode.Select;
         }
         public string Letter { get; set; }
-        public Int32 Index { get; set; }
         public ColorCode Code { get; set; }
     }
 
@@ -120,7 +118,7 @@
         ColorCodingInfo[] retval = new ColorCodingInfo[5];
         for (int i=0; i<5; i++)
         {
-            retval[i] = new ColorCodingInfo(string.Empty, i);
+            retval[i] = new ColorCodingInfo(string.Empty);
         }
 
         return retval;
@@ -173,7 +171,6 @@
 
         for (int i=0; i<5; i++)
         {
-            Console.WriteLine(i.ToString() + ":" + ColorCodingArray[i].Code.ToString());
             if (ColorCodingArray[i].Code == ColorCode.Select)
             {
                 ErrMsg = ColorCodingArray[i].Letter + " color not selected";
@@ -183,7 +180,14 @@
 
         ErrMsg = string.Empty;
 
-        // TODO: Filter word list
+        // Filter word list
+        List<string> FilteredList = new List<string>(Wordlist);
+        for (int i=0; i<5; i++)
+        {
+            List<string> NewFilteredList = FilteredWordList(FilteredList, ColorCodingArray[i], i);
+            FilteredList = NewFilteredList;
+        }
+        Wordlist = FilteredList;
 
         // Clean up 
         hideGuessColorPicker = true;
@@ -201,6 +205,43 @@
         cc4 = ColorCode.Select;
     }
 
+    private List<string> FilteredWordList(List<string> words, ColorCodingInfo cc, int index)
+    {
+        List<string> FilteredList = new List<string>();
+        switch (cc.Code)
+        {
+            case ColorCode.Black:
+                {
+                    // Black: word does not contain this letter. Remove all words that have this letter.
+                    foreach (string word in words)
+                    {
+                        if (!word.Contains(cc.Letter))
+                        {
+                            FilteredList.Add(word);
+                        }
+                    }
+                    break;
+                }
+            case ColorCode.Yellow:
+                {
+                    //TODO filtering, this just passes along unfiltered for now
+                    FilteredList = words;
+                    break;
+                }
+            case ColorCode.Green:
+                {
+                    //TODO filtering, this just passes along unfiltered for now
+                    FilteredList = words;
+                    break;
+                }
+            case ColorCode.Select:
+                {
+                    throw new ArgumentException("Filtering not specified");
+                }
+
+        }
+        return FilteredList;
+    }
 
     public List<string> Wordlist = new List<string>();
     public string SelectedWord = string.Empty;
