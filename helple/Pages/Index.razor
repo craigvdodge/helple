@@ -12,11 +12,15 @@
     <button @onclick="OnGuessBtnClick">Enter Guess</button>
 </div>
 <div hidden="@hideGuessInput">
+    <p>
     <label>Enter word to guess:</label>
     <input @bind="Guess" />
+    </p>
+    <p>
     <label>Or:</label>
     <button @onclick="UseWordlistSelectionForGuess">Use word selected below</button>
-    <button @onclick="OnGuessClick">enter</button>
+    </p>
+    <button @onclick="OnGuessClick">Filter list based on results of guess</button>
 </div>
 <div hidden="@hideGuessColorPicker">
     <div>
