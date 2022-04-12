@@ -259,8 +259,13 @@
                 }
             case ColorCode.Yellow:
                 {   
-                    //TODO filtering, this just passes along unfiltered for now
-                    FilteredList = words;
+                    foreach (string word in words)
+                    {
+                        if (word.Contains(cc.Letter) && word[index] != cc.Letter[0])
+                        {
+                            FilteredList.Add(word);
+                        }
+                    }
                     break;
                 }
             case ColorCode.Green:
