@@ -17,8 +17,11 @@
     </Content>
   </ItemGroup>
 
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+  <Target Name="PostBuildWin" AfterTargets="PostBuildEvent" Condition=" '$(OS)' == 'Windows_NT' ">
     <Exec Command="$(ProjectDir)\$(OutDir)\helpleDataProc.exe $(ProjectDir)\words_raw.txt $(ProjectDir)\..\helple\wwwroot\words.txt" />
   </Target>
 
+  <Target Name="PostBuildNix" AfterTargets="PostBuildEvent" Condition=" '$(OS)' != 'Windows_NT' ">
+	<Exec Command="$(ProjectDir)\$(OutDir)\helpleDataProc $(ProjectDir)\words_raw.txt $(ProjectDir)\..\helple\wwwroot\words.txt" />
+  </Target>
 </Project>
