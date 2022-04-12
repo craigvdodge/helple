@@ -106,9 +106,11 @@
         {
             Letter = letter;
             Code = ColorCode.Select;
+            Duplicates = new List<int>();
         }
         public string Letter { get; set; }
         public ColorCode Code { get; set; }
+        public List<int> Duplicates { get; set; }
     }
 
     public ColorCodingInfo[] ColorCodingArray = InitColorCodingArray();
@@ -178,7 +180,10 @@
             }
         }
 
+        // TODO: replace ErrMsg with Message
         ErrMsg = string.Empty;
+
+        GuessDupLetScan();
 
         // Filter word list
         List<string> FilteredList = new List<string>(Wordlist);
@@ -197,12 +202,32 @@
         {
             cci.Letter = string.Empty;
             cci.Code = ColorCode.Select;
+            cci.Duplicates.Clear();
         }
         cc0 = ColorCode.Select;
         cc1 = ColorCode.Select;
         cc2 = ColorCode.Select;
         cc3 = ColorCode.Select;
         cc4 = ColorCode.Select;
+        Message = string.Empty;
+    }
+
+    private void GuessDupLetScan()
+    {
+        for (int i=0; i<5; i++)
+        {
+            for (int j=0; j<5; j++)
+            {
+                if (i == j)
+                {
+                    continue;
+                }
+                if (ColorCodingArray[i].Letter == ColorCodingArray[j].Letter)
+                {
+                    ColorCodingArray[i].Duplicates.Add(j);
+                }
+            }
+        }
     }
 
     private List<string> FilteredWordList(List<string> words, ColorCodingInfo cc, int index)
@@ -214,29 +239,44 @@
                 {
                     // Black: word does not contain this letter. Remove all words that have this letter.
                     foreach (string word in words)
-                    {
+                    {                           
                         if (!word.Contains(cc.Letter))
                         {
                             FilteredList.Add(word);
+                        } 
+                        else // Duplicate edge case: if letter is at dupe, pass through too.
+                        {
+                            foreach (int dupe in cc.Duplicates)
+                            {
+                                if (word[dupe] == cc.Letter[0])
+                                {
+                                    FilteredList.Add(word);
+                                }
+                            }
                         }
                     }
                     break;
                 }
             case ColorCode.Yellow:
-                {
+                {   
                     //TODO filtering, this just passes along unfiltered for now
                     FilteredList = words;
                     break;
                 }
             case ColorCode.Green:
                 {
-                    //TODO filtering, this just passes along unfiltered for now
-                    FilteredList = words;
+                    foreach (string word in words)
+                    {
+                        if (word.Substring(index, 1) == cc.Letter)
+                        {
+                            FilteredList.Add(word);
+                        }
+                    }
                     break;
                 }
             case ColorCode.Select:
                 {
-                    throw new ArgumentException("Filtering not specified");
+                    throw new ArgumentException("Filtering not specified: " + cc.Letter);
                 }
 
         }
