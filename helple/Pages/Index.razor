@@ -76,10 +76,10 @@
         <p><button @onclick="@OnPageBack">previous</button>@PageHeader<button @onclick="@OnPageFwd">next</button></p>
         <table class="table">
             <tbody>
-                @for (int i=0; i<CurrentPage.Count; i+=5)
+                @for (int i=0; i<CurrentPage.Count; i+=@Columns)
                 {
                     <tr>
-                        @for(int j=0; j<5; j++)
+                        @for(int j=0; j<@Columns; j++)
                         {
                             @if (i+j >= CurrentPage.Count)
                             {
@@ -100,6 +100,7 @@
 @inject HttpClient _client
 
 @code {
+    public const int Columns = 4;
     // This is hella stupid, but I couldn't figure out how to bind the dropdown refering to an array memember. Brute force ftw.
     public ColorCode cc0;
     public ColorCode cc1;
