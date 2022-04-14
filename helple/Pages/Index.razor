@@ -16,10 +16,6 @@
     <label>Enter word to guess:</label>
     <input @bind="Guess" />
     </p>
-    <p>
-    <label>Or:</label>
-    <button @onclick="UseWordlistSelectionForGuess">Use word selected below</button>
-    </p>
     <button @onclick="OnGuessClick">Filter list based on results of guess</button>
 </div>
 <div hidden="@hideGuessColorPicker">
@@ -71,14 +67,34 @@
     <button @onclick="OnColorCodeClick">Filter list</button>
 </div>
 <div>
-    <p>Word Suggestions</p>
-    <select @bind="SelectedWord" size=20>
-        @foreach (string word in Wordlist)
-        {
-            <option value="@word">@word</option>
-        }
-    </select>
-    
+    @if (@CurrentPage == null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+        <p><button @onclick="@OnPageBack">previous</button>@PageHeader<button @onclick="@OnPageFwd">next</button></p>
+        <table class="table">
+            <tbody>
+                @for (int i=0; i<CurrentPage.Count; i+=5)
+                {
+                    <tr>
+                        @for(int j=0; j<5; j++)
+                        {
+                            @if (i+j >= CurrentPage.Count)
+                            {
+                                <td></td>
+                            }
+                            else
+                            {
+                                <td>@CurrentPage[i+j]</td>
+                            }
+                        }                       
+                    </tr>    
+                }
+        </tbody>
+    </table>
+    }   
 </div>
 
 @inject HttpClient _client
@@ -193,6 +209,9 @@
             FilteredList = NewFilteredList;
         }
         Wordlist = FilteredList;
+        CurrentPageNumber = 0;
+        AllPages = Paginate(ref Wordlist);
+        CurrentPage = AllPages[CurrentPageNumber];
 
         // Clean up 
         hideGuessColorPicker = true;
@@ -289,16 +308,59 @@
     }
 
     public List<string> Wordlist = new List<string>();
-    public string SelectedWord = string.Empty;
+    public List<string>? CurrentPage = null;
+    public List<List<string>>? AllPages = null;
+    public int CurrentPageNumber = 0;
 
-    private void UseWordlistSelectionForGuess()
+    private List<List<string>> Paginate(ref List<string> flatWordList, int pagesize = 100)
     {
-        Message = string.Empty;
-        if (SelectedWord == string.Empty)
+        List<List<string>> retval = new List<List<string>>();
+
+        int currentword = 0;
+        retval.Add(new List<string>());
+        int currentpage = 0;
+        foreach (string word in flatWordList)
         {
-            Message = "No word selected.";
+            retval[currentpage].Add(word);
+            currentword++;
+            if ((currentword % pagesize) == 0) //we've reached pagesize
+            {
+                // TODO: see if we have any more words & don't add black pages
+                retval.Add(new List<string>()); //Add another page
+                currentpage++;
+            }
         }
-        Guess = SelectedWord;
+
+        return retval;
+    }
+
+    private string PageHeader
+    {
+        get
+        {
+            if (AllPages == null)
+            {
+                return string.Empty;
+            }
+            else
+            {
+                return "Page " + (CurrentPageNumber + 1).ToString() + " of " + AllPages.Count.ToString();
+            }
+        }
+    }
+
+    private void OnPageBack()
+    {
+        if (CurrentPageNumber <= 0 || AllPages == null) { return; }
+        CurrentPageNumber--;
+        CurrentPage = AllPages[CurrentPageNumber];
+    }
+
+    private void OnPageFwd()
+    {
+        if (AllPages == null || CurrentPageNumber >= AllPages.Count-1) { return; }
+        CurrentPageNumber++;;
+        CurrentPage = AllPages[CurrentPageNumber];
     }
 
     private async Task<bool> ReadWordsFile()
@@ -309,10 +371,9 @@
             await foo;
             string[] wordsTemp = foo.Result.Split(',', StringSplitOptions.RemoveEmptyEntries);
             Wordlist.Clear();
-            foreach (string w in wordsTemp)
-            {
-                Wordlist.Add(w);
-            }
+            Wordlist = new List<string>(wordsTemp);
+            AllPages = Paginate(ref Wordlist);
+            CurrentPage = AllPages[CurrentPageNumber];
             Message = string.Empty;
             return true;
         }
