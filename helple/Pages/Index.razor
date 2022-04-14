@@ -1,70 +1,88 @@
 ﻿@page "/"
 
-<PageTitle>Helple</PageTitle>
+<PageTitle>Helple - A Tool For Wordle</PageTitle>
 
-<h1>Helple Word List</h1>
+<h1 class="text-center">Helple</h1>
 
 <div>
-    <label>@ErrMsg</label>
     <label @onload="ReadWordsFile">@Message</label>
-</div>
-<div hidden="@hideGuessBtn">
-    <button @onclick="OnGuessBtnClick">Enter Guess</button>
 </div>
 <div hidden="@hideGuessInput">
     <p>
-    <label>Enter word to guess:</label>
+    <label>Guess:</label>
     <input @bind="Guess" />
-    </p>
-    <button @onclick="OnGuessClick">Filter list based on results of guess</button>
+    <button @onclick="OnGuessClick">Filter</button>
+</p>
 </div>
 <div hidden="@hideGuessColorPicker">
-    <div>
-        <label>@ColorCodingArray[0].Letter</label>
-        <select @bind="cc0">
-            @foreach (var value in Enum.GetValues<ColorCode>())
-            {
-                <option>@value.ToString()</option>
-            }
-        </select>
-    </div>
-    <div>
-        <label>@ColorCodingArray[1].Letter</label>
-        <select @bind="cc1">
-            @foreach (var value in Enum.GetValues<ColorCode>())
-            {
-                <option>@value.ToString()</option>
-            }
-        </select>
-    </div>
-    <div>
-        <label>@ColorCodingArray[2].Letter</label>
-        <select @bind="cc2">
-            @foreach (var value in Enum.GetValues<ColorCode>())
-            {
-                <option>@value.ToString()</option>
-            }
-        </select>
-    </div>
-    <div>
-        <label>@ColorCodingArray[3].Letter</label>
-        <select @bind="cc3">
-            @foreach (var value in Enum.GetValues<ColorCode>())
-            {
-                <option>@value.ToString()</option>
-            }
-        </select>
-    </div>
-    <div>
-        <label>@ColorCodingArray[4].Letter</label>
-        <select @bind="cc4">
-            @foreach (var value in Enum.GetValues<ColorCode>())
-            {
-                <option>@value.ToString()</option>
-            }
-        </select>
-    </div>
-    <button @onclick="OnColorCodeClick">Filter list</button>
+    <table class="table">
+        <tbody class="text-center">
+            <tr>
+                <td>
+                    @ColorCodingArray[0].Letter
+                </td>
+                <td>
+                    @ColorCodingArray[1].Letter
+                </td>
+                <td>
+                    @ColorCodingArray[2].Letter
+                </td>
+                <td>
+                    @ColorCodingArray[3].Letter
+                </td >
+                <td class="text-center">
+                    @ColorCodingArray[4].Letter
+                </td>
+            </tr>
+            <tr>
+                <td> 
+                    <select @bind="cc0">
+                    @foreach (var value in Enum.GetValues<ColorCode>())
+                    {
+                        <option>@value.ToString()</option>
+                    }
+                    </select>
+                </td>
+                <td>
+                    <select @bind="cc1">
+                    @foreach (var value in Enum.GetValues<ColorCode>())
+                    {
+                        <option>@value.ToString()</option>
+                    }
+                    </select>
+                </td>
+                <td>
+                    <select @bind="cc2">
+                    @foreach (var value in Enum.GetValues<ColorCode>())
+                    {
+                        <option>@value.ToString()</option>
+                    }
+                    </select>
+                </td>
+                <td>
+                    <select @bind="cc3">
+                    @foreach (var value in Enum.GetValues<ColorCode>())
+                    {
+                        <option>@value.ToString()</option>
+                    }
+                    </select>
+                </td>
+                <td>
+                    <select @bind="cc4">
+                    @foreach (var value in Enum.GetValues<ColorCode>())
+                    {
+                        <option>@value.ToString()</option>
+                    }
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td colspan=5>
+                    <button @onclick="OnColorCodeClick">Filter list</button>
+                </td>
+            </tr>
+        </tbody>
+    </table> 
 </div>
 <div>
     @if (@CurrentPage == null)
@@ -149,12 +167,12 @@
 
         if (Guess == null || Guess.Length != 5)
         {
-            ErrMsg = "Guess must be 5 characters.";
+            Message = "Guess must be 5 characters.";
             return;
         }
         Guess = Guess.ToUpper();
         // TODO: more checking here
-        ErrMsg = null;
+        Message = string.Empty;
         hideGuessColorPicker = false;
         hideGuessInput = true;      
 
@@ -166,14 +184,11 @@
         }
 
     }
-    private string? ErrMsg;
     private bool hideGuessColorPicker = true;
-    private bool hideGuessInput = true;
-    private bool hideGuessBtn = false;
+    private bool hideGuessInput = false;
 
     private void OnGuessBtnClick()
     {
-        hideGuessBtn = true;
         hideGuessInput = false;
     }
 
@@ -192,13 +207,12 @@
         {
             if (ColorCodingArray[i].Code == ColorCode.Select)
             {
-                ErrMsg = ColorCodingArray[i].Letter + " color not selected";
+                Message = ColorCodingArray[i].Letter + " color not selected";
                 return;
             }
         }
 
-        // TODO: replace ErrMsg with Message
-        ErrMsg = string.Empty;
+        Message = string.Empty;
 
         GuessDupLetScan();
 
@@ -216,7 +230,7 @@
 
         // Clean up 
         hideGuessColorPicker = true;
-        hideGuessBtn = false;
+        hideGuessInput = false;
         Guess = null;
         foreach (ColorCodingInfo cci in ColorCodingArray)
         {
@@ -313,7 +327,7 @@
     public List<List<string>>? AllPages = null;
     public int CurrentPageNumber = 0;
 
-    private List<List<string>> Paginate(ref List<string> flatWordList, int pagesize = 100)
+    private List<List<string>> Paginate(ref List<string> flatWordList, int pagesize = 80)
     {
         List<List<string>> retval = new List<List<string>>();
 
