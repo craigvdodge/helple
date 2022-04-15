@@ -1,0 +1,424 @@
+﻿@page "/"
+
+<PageTitle>Helple - A Tool For Wordle</PageTitle>
+
+<h1 class="text-center">Helple</h1>
+
+<div>
+    <label @onload="ReadWordsFile">@Message</label>
+</div>
+<div hidden="@hideGuessInput">
+    <p>
+    <label>Guess:</label>
+    <input @bind="Guess" />
+    <button @onclick="OnGuessClick">Filter</button>
+</p>
+</div>
+<div hidden="@hideGuessColorPicker">
+    <table class="table">
+        <tbody class="text-center">
+            <tr>
+                <td>
+                    @ColorCodingArray[0].Letter
+                </td>
+                <td>
+                    @ColorCodingArray[1].Letter
+                </td>
+                <td>
+                    @ColorCodingArray[2].Letter
+                </td>
+                <td>
+                    @ColorCodingArray[3].Letter
+                </td >
+                <td class="text-center">
+                    @ColorCodingArray[4].Letter
+                </td>
+            </tr>
+            <tr>
+                <td> 
+                    <select @bind="cc0">
+                    @foreach (var value in Enum.GetValues<ColorCode>())
+                    {
+                        <option>@value.ToString()</option>
+                    }
+                    </select>
+                </td>
+                <td>
+                    <select @bind="cc1">
+                    @foreach (var value in Enum.GetValues<ColorCode>())
+                    {
+                        <option>@value.ToString()</option>
+                    }
+                    </select>
+                </td>
+                <td>
+                    <select @bind="cc2">
+                    @foreach (var value in Enum.GetValues<ColorCode>())
+                    {
+                        <option>@value.ToString()</option>
+                    }
+                    </select>
+                </td>
+                <td>
+                    <select @bind="cc3">
+                    @foreach (var value in Enum.GetValues<ColorCode>())
+                    {
+                        <option>@value.ToString()</option>
+                    }
+                    </select>
+                </td>
+                <td>
+                    <select @bind="cc4">
+                    @foreach (var value in Enum.GetValues<ColorCode>())
+                    {
+                        <option>@value.ToString()</option>
+                    }
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td colspan=5>
+                    <button @onclick="OnColorCodeClick">Filter list</button>
+                </td>
+            </tr>
+        </tbody>
+    </table> 
+</div>
+<div>
+    @if (@CurrentPage == null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+        <p><button @onclick="@OnPageBack">previous</button>@PageHeader<button @onclick="@OnPageFwd">next</button></p>
+        <table class="table" @ontouchstart="@OnTouchStart" @ontouchend="@OnTouchEnd">
+            <tbody>
+                @for (int i=0; i<CurrentPage.Count; i+=@Columns)
+                {
+                    <tr>
+                        @for(int j=0; j<@Columns; j++)
+                        {
+                            @if (i+j >= CurrentPage.Count)
+                            {
+                                <td></td>
+                            }
+                            else
+                            {
+                                <td>@CurrentPage[i+j]</td>
+                            }
+                        }                       
+                    </tr>    
+                }
+        </tbody>
+    </table>
+    }   
+</div>
+
+@inject HttpClient _client
+
+@code {
+    public const int Columns = 4;
+    // This is hella stupid, but I couldn't figure out how to bind the dropdown refering to an array memember. Brute force ftw.
+    public ColorCode cc0;
+    public ColorCode cc1;
+    public ColorCode cc2;
+    public ColorCode cc3;
+    public ColorCode cc4;
+
+    // "select" means user has not entered color code yet
+    public enum ColorCode
+    {
+        Select=0,
+        Black,
+        Yellow,
+        Green
+    }
+
+    public class ColorCodingInfo
+    {
+        public ColorCodingInfo(string letter)
+        {
+            Letter = letter;
+            Code = ColorCode.Select;
+            Duplicates = new List<int>();
+        }
+        public string Letter { get; set; }
+        public ColorCode Code { get; set; }
+        public List<int> Duplicates { get; set; }
+    }
+
+    public ColorCodingInfo[] ColorCodingArray = InitColorCodingArray();
+
+    public static ColorCodingInfo[] InitColorCodingArray()
+    {
+        ColorCodingInfo[] retval = new ColorCodingInfo[5];
+        for (int i=0; i<5; i++)
+        {
+            retval[i] = new ColorCodingInfo(string.Empty);
+        }
+
+        return retval;
+    }
+
+    private string? Guess { get; set; }
+    private void OnGuessClick()
+    {
+
+        if (Guess == null || Guess.Length != 5)
+        {
+            Message = "Guess must be 5 characters.";
+            return;
+        }
+        Guess = Guess.ToUpper();
+        // TODO: more checking here
+        Message = string.Empty;
+        hideGuessColorPicker = false;
+        hideGuessInput = true;      
+
+        // xfer Guess to ColorCodingInfo array
+        for (int i=0; i<5; i++)
+        {
+            ColorCodingArray[i].Letter = Guess.Substring(i, 1);
+            ColorCodingArray[i].Code = ColorCode.Select;
+        }
+
+    }
+    private bool hideGuessColorPicker = true;
+    private bool hideGuessInput = false;
+
+    private void OnGuessBtnClick()
+    {
+        hideGuessInput = false;
+    }
+
+    private void OnColorCodeClick()
+    {
+        // xfer codes from ccx variables to ColorCodingArray
+        ColorCodingArray[0].Code = cc0;
+        ColorCodingArray[1].Code = cc1;
+        ColorCodingArray[2].Code = cc2;
+        ColorCodingArray[3].Code = cc3;
+        ColorCodingArray[4].Code = cc4;
+
+        // Validation
+
+        for (int i=0; i<5; i++)
+        {
+            if (ColorCodingArray[i].Code == ColorCode.Select)
+            {
+                Message = ColorCodingArray[i].Letter + " color not selected";
+                return;
+            }
+        }
+
+        Message = string.Empty;
+
+        GuessDupLetScan();
+
+        // Filter word list
+        List<string> FilteredList = new List<string>(Wordlist);
+        for (int i=0; i<5; i++)
+        {
+            List<string> NewFilteredList = FilteredWordList(FilteredList, ColorCodingArray[i], i);
+            FilteredList = NewFilteredList;
+        }
+        Wordlist = FilteredList;
+        CurrentPageNumber = 0;
+        AllPages = Paginate(ref Wordlist);
+        CurrentPage = AllPages[CurrentPageNumber];
+
+        // Clean up 
+        hideGuessColorPicker = true;
+        hideGuessInput = false;
+        Guess = null;
+        foreach (ColorCodingInfo cci in ColorCodingArray)
+        {
+            cci.Letter = string.Empty;
+            cci.Code = ColorCode.Select;
+            cci.Duplicates.Clear();
+        }
+        cc0 = ColorCode.Select;
+        cc1 = ColorCode.Select;
+        cc2 = ColorCode.Select;
+        cc3 = ColorCode.Select;
+        cc4 = ColorCode.Select;
+        Message = string.Empty;
+    }
+
+    private void GuessDupLetScan()
+    {
+        for (int i=0; i<5; i++)
+        {
+            for (int j=0; j<5; j++)
+            {
+                if (i == j)
+                {
+                    continue;
+                }
+                if (ColorCodingArray[i].Letter == ColorCodingArray[j].Letter)
+                {
+                    ColorCodingArray[i].Duplicates.Add(j);
+                }
+            }
+        }
+    }
+
+    private List<string> FilteredWordList(List<string> words, ColorCodingInfo cc, int index)
+    {
+        List<string> FilteredList = new List<string>();
+        switch (cc.Code)
+        {
+            case ColorCode.Black:
+                {
+                    // Black: word does not contain this letter. Remove all words that have this letter.
+                    foreach (string word in words)
+                    {                           
+                        if (!word.Contains(cc.Letter))
+                        {
+                            FilteredList.Add(word);
+                        } 
+                        else // Duplicate edge case: if letter is at dupe, pass through too.
+                        {
+                            foreach (int dupe in cc.Duplicates)
+                            {
+                                if (word[dupe] == cc.Letter[0])
+                                {
+                                    FilteredList.Add(word);
+                                }
+                            }
+                        }
+                    }
+                    break;
+                }
+            case ColorCode.Yellow:
+                {   
+                    foreach (string word in words)
+                    {
+                        if (word.Contains(cc.Letter) && word[index] != cc.Letter[0])
+                        {
+                            FilteredList.Add(word);
+                        }
+                    }
+                    break;
+                }
+            case ColorCode.Green:
+                {
+                    foreach (string word in words)
+                    {
+                        if (word.Substring(index, 1) == cc.Letter)
+                        {
+                            FilteredList.Add(word);
+                        }
+                    }
+                    break;
+                }
+            case ColorCode.Select:
+                {
+                    throw new ArgumentException("Filtering not specified: " + cc.Letter);
+                }
+
+        }
+        return FilteredList;
+    }
+
+    public List<string> Wordlist = new List<string>();
+    public List<string>? CurrentPage = null;
+    public List<List<string>>? AllPages = null;
+    public int CurrentPageNumber = 0;
+
+    private List<List<string>> Paginate(ref List<string> flatWordList, int pagesize = 80)
+    {
+        List<List<string>> retval = new List<List<string>>();
+
+        int currentword = 0;
+        retval.Add(new List<string>());
+        int currentpage = 0;
+        foreach (string word in flatWordList)
+        {
+            retval[currentpage].Add(word);
+            currentword++;
+            if ((currentword % pagesize) == 0) //we've reached pagesize
+            {
+                retval.Add(new List<string>()); //Add another page
+                currentpage++;
+            }
+        }
+
+        return retval;
+    }
+
+    private string PageHeader
+    {
+        get
+        {
+            if (AllPages == null)
+            {
+                return string.Empty;
+            }
+            else
+            {
+                return "Page " + (CurrentPageNumber + 1).ToString() + " of " + AllPages.Count.ToString();
+            }
+        }
+    }
+
+    private void OnPageBack()
+    {
+        if (CurrentPageNumber <= 0 || AllPages == null) { return; }
+        CurrentPageNumber--;
+        CurrentPage = AllPages[CurrentPageNumber];
+    }
+
+    private void OnPageFwd()
+    {
+        if (AllPages == null || CurrentPageNumber >= AllPages.Count-1) { return; }
+        CurrentPageNumber++;;
+        CurrentPage = AllPages[CurrentPageNumber];
+    }
+
+    private void OnTouchStart(TouchEventArgs t)
+    {
+        var pt = t.Touches[0];
+        Message = "start {pt.ClientX}";
+    }
+
+    private void OnTouchEnd(TouchEventArgs t)
+    {
+        var pt = t.ChangedTouches[0];
+        Message = $"end {pt.ClientX}";
+    }
+
+    private async Task<bool> ReadWordsFile()
+    {
+        try
+        {
+            var foo = _client.GetStringAsync("words.txt");
+            await foo;
+            string[] wordsTemp = foo.Result.Split(',', StringSplitOptions.RemoveEmptyEntries);
+            Wordlist.Clear();
+            Wordlist = new List<string>(wordsTemp);
+            AllPages = Paginate(ref Wordlist);
+            CurrentPage = AllPages[CurrentPageNumber];
+            Message = string.Empty;
+            return true;
+        }
+        catch (Exception e)
+        {
+            Message = "Error loading word list.";
+            Console.WriteLine(e.Message);
+            Task failed = Task.CompletedTask;
+            return false;
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Message = "Loading word list...";
+
+        bool loadSuccess = await ReadWordsFile();
+    }
+
+    private string Message = string.Empty;
+
+}
