@@ -84,7 +84,7 @@
         </tbody>
     </table> 
 </div>
-<div>
+<div @ontouchstart="HandleTouchStart" @ontouchend="HandleTouchEnd">
     @if (@CurrentPage == null)
     {
         <p><em>Loading...</em></p>
@@ -376,6 +376,27 @@
         if (AllPages == null || CurrentPageNumber >= AllPages.Count-1) { return; }
         CurrentPageNumber++;;
         CurrentPage = AllPages[CurrentPageNumber];
+    }
+
+    private double touchStart = 0.0;
+
+    private void HandleTouchStart(TouchEventArgs t)
+    {
+        touchStart = t.Touches[0].ClientX;
+    }
+
+    private void HandleTouchEnd(TouchEventArgs t)
+    {
+        double touchEnd = t.ChangedTouches[0].ClientX;
+        if (touchEnd < touchStart)
+        {
+            OnPageFwd();
+        }
+        if (touchEnd > touchStart)
+        {
+            OnPageBack();
+        }
+
     }
 
     private async Task<bool> ReadWordsFile()
