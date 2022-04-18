@@ -91,7 +91,7 @@
     }
     else
     {
-        <p><button @onclick="@OnPageBack">previous</button>@PageHeader<button @onclick="@OnPageFwd">next</button></p>
+        <p class="text-center"><button @onclick="@OnPageBack">&lt;</button>@PageHeader<button @onclick="@OnPageFwd">&gt;</button></p>
         <table class="table">
             <tbody>
                 @for (int i=0; i<CurrentPage.Count; i+=@Columns)
@@ -392,11 +392,11 @@
         double touchEndX = t.ChangedTouches[0].ClientX;
         double yDiff = Math.Abs(touchStartY - t.ChangedTouches[0].ClientY);
 
-        if ((yDiff < 100) && ((touchEndX - touchStartX) < -10))
+        if ((yDiff < 80) && ((touchEndX - touchStartX) < -30))
         {
             OnPageFwd();
         }
-        if ((yDiff < 100) && ((touchEndX - touchStartX) > 10))
+        if ((yDiff < 80) && ((touchEndX - touchStartX) > 30))
         {
             OnPageBack();
         }
