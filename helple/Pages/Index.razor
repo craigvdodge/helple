@@ -378,21 +378,25 @@
         CurrentPage = AllPages[CurrentPageNumber];
     }
 
-    private double touchStart = 0.0;
+    private double touchStartX = 0.0;
+    private double touchStartY = 0.0;
 
     private void HandleTouchStart(TouchEventArgs t)
     {
-        touchStart = t.Touches[0].ClientX;
+        touchStartX = t.Touches[0].ClientX;
+        touchStartY = t.Touches[0].ClientY;
     }
 
     private void HandleTouchEnd(TouchEventArgs t)
     {
-        double touchEnd = t.ChangedTouches[0].ClientX;
-        if (touchEnd < touchStart)
+        double touchEndX = t.ChangedTouches[0].ClientX;
+        double yDiff = Math.Abs(touchStartY - t.ChangedTouches[0].ClientY);
+
+        if ((yDiff < 100) && ((touchEndX - touchStartX) < -10))
         {
             OnPageFwd();
         }
-        if (touchEnd > touchStart)
+        if ((yDiff < 100) && ((touchEndX - touchStartX) > 10))
         {
             OnPageBack();
         }
