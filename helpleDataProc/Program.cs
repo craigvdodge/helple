@@ -36,19 +36,17 @@ foreach (string word in words)
         charsTotal++;
     }
 
-    outputList.Add(word.ToUpper(), 0);
+    outputList.Add(word, 0);
 }
-if (File.Exists(args[1]))
+
+HelpleDataFile.DataFile dataFile = new HelpleDataFile.DataFile();
+
+foreach (string word in outputList.Keys)
 {
-    File.Delete(args[1]);
+    dataFile.AddWord(word);
 }
-using (StreamWriter sw = File.CreateText(args[1]))
-{ 
-    foreach (string k in outputList.Keys)
-    {
-        sw.Write(k + ',');
-    }
-}
+
+dataFile.Write(args[1]);
 
 // report stats
 Console.WriteLine("Total final words: " + outputList.Count);

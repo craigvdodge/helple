@@ -17,6 +17,10 @@
     </Content>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\HelpleDataFile\HelpleDataFile.csproj" />
+  </ItemGroup>
+
   <Target Name="PostBuildWin" AfterTargets="PostBuildEvent" Condition=" '$(OS)' == 'Windows_NT' ">
     <Exec Command="$(ProjectDir)\$(OutDir)\helpleDataProc.exe $(ProjectDir)\words_raw.txt $(ProjectDir)\..\helple\wwwroot\words.txt" />
   </Target>

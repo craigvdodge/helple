@@ -405,23 +405,25 @@
 
     private async Task<bool> ReadWordsFile()
     {
-        try
+        HelpleDataFile.DataFile dataFile = new HelpleDataFile.DataFile(_client);
+
+        if (await dataFile.Read("words.txt"))
         {
-            var foo = _client.GetStringAsync("words.txt");
-            await foo;
-            string[] wordsTemp = foo.Result.Split(',', StringSplitOptions.RemoveEmptyEntries);
             Wordlist.Clear();
-            Wordlist = new List<string>(wordsTemp);
+            foreach (HelpleDataFile.Entry e in dataFile.Entries)
+            {
+                Wordlist.Add(e.Word);
+            }
+
             AllPages = Paginate(ref Wordlist);
             CurrentPage = AllPages[CurrentPageNumber];
             Message = string.Empty;
             return true;
         }
-        catch (Exception e)
+        else
         {
             Message = "Error loading word list.";
-            Console.WriteLine(e.Message);
-            Task failed = Task.CompletedTask;
+            Console.WriteLine(dataFile.ExtendedInfo);
             return false;
         }
     }
