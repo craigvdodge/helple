@@ -1,5 +1,6 @@
 ﻿namespace HelpleDataFile
 {
+    using System.Text.Json;
     public class DataFile
     {
         public DataFile()
@@ -18,26 +19,21 @@
 
         public void Write(string Filename)
         {
-            // This is currently written for backwards compatiblity and will be changed in the future
             entries.OrderBy(s => s.Word);
 
             if (File.Exists(Filename))
             {
                 File.Delete(Filename);
             }
-
+            JsonSerializerOptions options = new JsonSerializerOptions { WriteIndented = true };
             using (StreamWriter sw = File.CreateText(Filename))
             {
-                foreach(Entry e in entries)
-                {
-                    sw.Write(e.Word + ',');
-                }
+                sw.Write(JsonSerializer.Serialize(entries, options));
             }
         }
 
         public async Task<bool> Read(string Filename)
         {
-            // Subject to change without notice
             if (HttpClient == null)
             {
                 _extendedInfo = "Http client info not set";
@@ -48,11 +44,9 @@
             {
                 var readTask = HttpClient.GetStringAsync(Filename);
                 await readTask;
-                string[] wordsTemp = readTask.Result.Split(',', StringSplitOptions.RemoveEmptyEntries);
-                foreach (string word in wordsTemp)
-                {
-                    entries.Add(new Entry(word));
-                }
+#pragma warning disable CS8601 // Possible null reference assignment.
+                entries = JsonSerializer.Deserialize<List<Entry>>(readTask.Result);
+#pragma warning restore CS8601 // Possible null reference assignment.
 
                 _extendedInfo = string.Empty;
                 return true;
@@ -76,7 +70,6 @@
 
         private List<Entry> entries;
         public List<Entry> Entries { get { return entries; } }
-
     }
 
     /// <summary>
