@@ -217,10 +217,10 @@
         GuessDupLetScan();
 
         // Filter word list
-        List<string> FilteredList = new List<string>(Wordlist);
+        List<HelpleDataFile.Entry> FilteredList = new List<HelpleDataFile.Entry>(Wordlist);
         for (int i=0; i<5; i++)
         {
-            List<string> NewFilteredList = FilteredWordList(FilteredList, ColorCodingArray[i], i);
+            List<HelpleDataFile.Entry> NewFilteredList = FilteredWordList(FilteredList, ColorCodingArray[i], i);
             FilteredList = NewFilteredList;
         }
         Wordlist = FilteredList;
@@ -264,27 +264,27 @@
         }
     }
 
-    private List<string> FilteredWordList(List<string> words, ColorCodingInfo cc, int index)
+    private List<HelpleDataFile.Entry> FilteredWordList(List<HelpleDataFile.Entry> words, ColorCodingInfo cc, int index)
     {
-        List<string> FilteredList = new List<string>();
+        List<HelpleDataFile.Entry> FilteredList = new List<HelpleDataFile.Entry>();
         switch (cc.Code)
         {
             case ColorCode.Black:
                 {
                     // Black: word does not contain this letter. Remove all words that have this letter.
-                    foreach (string word in words)
+                    foreach (HelpleDataFile.Entry e in words)
                     {                           
-                        if (!word.Contains(cc.Letter))
+                        if (!e.Word.Contains(cc.Letter))
                         {
-                            FilteredList.Add(word);
+                            FilteredList.Add(e);
                         } 
                         else // Duplicate edge case: if letter is at dupe, pass through too.
                         {
                             foreach (int dupe in cc.Duplicates)
                             {
-                                if (word[dupe] == cc.Letter[0])
+                                if (e.Word[dupe] == cc.Letter[0])
                                 {
-                                    FilteredList.Add(word);
+                                    FilteredList.Add(e);
                                 }
                             }
                         }
@@ -293,54 +293,53 @@
                 }
             case ColorCode.Yellow:
                 {   
-                    foreach (string word in words)
+                    foreach (HelpleDataFile.Entry e in words)
                     {
-                        if (word.Contains(cc.Letter) && word[index] != cc.Letter[0])
+                        if (e.Word.Contains(cc.Letter) && e.Word[index] != cc.Letter[0])
                         {
-                            FilteredList.Add(word);
+                            FilteredList.Add(e);
                         }
                     }
                     break;
                 }
             case ColorCode.Green:
                 {
-                    foreach (string word in words)
+                    foreach (HelpleDataFile.Entry e in words)
                     {
-                        if (word.Substring(index, 1) == cc.Letter)
+                        if (e.Word.Substring(index, 1) == cc.Letter)
                         {
-                            FilteredList.Add(word);
+                            FilteredList.Add(e);
                         }
                     }
                     break;
                 }
             case ColorCode.Select:
                 {
-                    throw new ArgumentException("Filtering not specified: " + cc.Letter);
+                    throw new ArgumentException("Color not specified: " + cc.Letter);
                 }
 
         }
         return FilteredList;
     }
 
-    public List<string> Wordlist = new List<string>();
+    public List<HelpleDataFile.Entry> Wordlist = new List<HelpleDataFile.Entry>();
     public List<string>? CurrentPage = null;
     public List<List<string>>? AllPages = null;
     public int CurrentPageNumber = 0;
 
-    private List<List<string>> Paginate(ref List<string> flatWordList, int pagesize = 80)
+    private List<List<string>> Paginate(ref List<HelpleDataFile.Entry> flatWordList, int pagesize = 80)
     {
         List<List<string>> retval = new List<List<string>>();
 
         int currentword = 0;
         retval.Add(new List<string>());
         int currentpage = 0;
-        foreach (string word in flatWordList)
+        foreach (HelpleDataFile.Entry e in flatWordList)
         {
-            retval[currentpage].Add(word);
+            retval[currentpage].Add(e.Word);
             currentword++;
             if ((currentword % pagesize) == 0) //we've reached pagesize
             {
-                // TODO: see if we have any more words & don't add black pages
                 retval.Add(new List<string>()); //Add another page
                 currentpage++;
             }
@@ -412,7 +411,7 @@
             Wordlist.Clear();
             foreach (HelpleDataFile.Entry e in dataFile.Entries)
             {
-                Wordlist.Add(e.Word);
+                Wordlist.Add(e);
             }
 
             AllPages = Paginate(ref Wordlist);
