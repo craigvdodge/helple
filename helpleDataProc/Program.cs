@@ -39,11 +39,28 @@ foreach (string word in words)
     outputList.Add(word, 0);
 }
 
+// Convert stats to letter score
+SortedList<char, int> letterScores = new SortedList<char, int>(26);
+foreach (char c in charCount.Keys)
+{
+    double intermediate = Convert.ToDouble(charCount[c]) / Convert.ToDouble(charsTotal);
+    intermediate = intermediate * 10000;
+    letterScores.Add(c, Convert.ToInt32(Math.Round(intermediate)));
+    Console.WriteLine(c + ": " + letterScores[c]);
+}
+
 HelpleDataFile.DataFile dataFile = new HelpleDataFile.DataFile();
 
 foreach (string word in outputList.Keys)
 {
-    dataFile.AddWord(word);
+    string deDupedString = new string(word.ToCharArray().Distinct().ToArray());
+    int score = 0;
+    foreach (char c in deDupedString)
+    {
+        score += letterScores[c];
+    }
+
+    dataFile.AddWord(word, score);
 }
 
 dataFile.Write(args[1]);

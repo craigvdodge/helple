@@ -91,6 +91,14 @@
     }
     else
     {
+        <p class="text-center">
+            <select @onchange="OnSortChange">
+                @foreach (var s in Enum.GetValues<SortBy>())
+                {
+                    <option>@s.ToString()</option>
+                }
+            </select>
+        </p>
         <p class="text-center"><button @onclick="@OnPageBack">&lt;</button>@PageHeader<button @onclick="@OnPageFwd">&gt;</button></p>
         <table class="table">
             <tbody>
@@ -346,6 +354,34 @@
         }
 
         return retval;
+    }
+
+    private enum SortBy
+    {
+        Alphabetical = 0,
+        Score
+    }
+
+    private void OnSortChange(ChangeEventArgs e)
+    {
+        if (e.Value != null)
+        {
+            if (e.Value.ToString() == "Alphabetical")
+            {
+                Wordlist = Wordlist.OrderBy(o => o.Word).ToList();
+            }
+            else if (e.Value.ToString() == "Score")
+            {
+                Wordlist = Wordlist.OrderByDescending(o => o.Score).ToList();
+            }
+            else
+            {
+                return; // something went horribly wrong, bail now.
+            }
+
+            AllPages = Paginate(ref Wordlist);
+            CurrentPage = AllPages[CurrentPageNumber];
+        }
     }
 
     private string PageHeader

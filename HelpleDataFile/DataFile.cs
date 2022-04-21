@@ -63,9 +63,9 @@
         public string ExtendedInfo { get { return _extendedInfo; } }
         private string _extendedInfo;
 
-        public void AddWord(string word)
+        public void AddWord(string word, int score=0)
         {
-            entries.Add(new Entry(word.ToUpper()));
+            entries.Add(new Entry(word.ToUpper(), score));
         }
 
         private List<Entry> entries;
@@ -80,14 +80,17 @@
         public Entry()
         {
             Word = string.Empty;
+            Score = 0;
         }
 
-        public Entry(string word)
+        public Entry(string word, int score=0)
         {
             Word = word;
+            Score = score;
         }
 
         public string Word { get; set; }
+        public int Score { get; set; }
 
     }
 }
