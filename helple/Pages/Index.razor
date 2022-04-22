@@ -8,10 +8,9 @@
     <label @onload="ReadWordsFile">@Message</label>
 </div>
 <div hidden="@hideGuessInput">
-    <p>
-    <label>Guess:</label>
-    <input @bind="Guess" />
-    <button @onclick="OnGuessClick">Filter</button>
+    <p class="text-center">
+    <label>Word:</label>
+    <input @bind="Guess" @onkeydown="OnGuessEnter" @oninput="OnGuessInput"/>
 </p>
 </div>
 <div hidden="@hideGuessColorPicker">
@@ -170,27 +169,35 @@
     }
 
     private string? Guess { get; set; }
-    private void OnGuessClick()
+    private void OnGuessInput(ChangeEventArgs e)
     {
-
-        if (Guess == null || Guess.Length != 5)
+        if (e.Value != null)
         {
-            Message = "Guess must be 5 characters.";
-            return;
+            Guess = e.Value.ToString();
         }
-        Guess = Guess.ToUpper();
-        // TODO: more checking here
-        Message = string.Empty;
-        hideGuessColorPicker = false;
-        hideGuessInput = true;      
-
-        // xfer Guess to ColorCodingInfo array
-        for (int i=0; i<5; i++)
+    }
+    private void OnGuessEnter(KeyboardEventArgs e)
+    {
+        if (e.Code == "Enter" || e.Code == "NumpadEnter")
         {
-            ColorCodingArray[i].Letter = Guess.Substring(i, 1);
-            ColorCodingArray[i].Code = ColorCode.Select;
-        }
+            if (Guess == null || Guess.Length != 5)
+            {
+                Message = "Guess must be 5 characters.";
+                return;
+            }
+            Guess = Guess.ToUpper();
+            // TODO: more checking here
+            Message = string.Empty;
+            hideGuessColorPicker = false;
+            hideGuessInput = true;
 
+            // xfer Guess to ColorCodingInfo array
+            for (int i=0; i<5; i++)
+            {
+                ColorCodingArray[i].Letter = Guess.Substring(i, 1);
+                ColorCodingArray[i].Code = ColorCode.Select;
+            }
+        }
     }
     private bool hideGuessColorPicker = true;
     private bool hideGuessInput = false;
