@@ -1,0 +1,28 @@
+﻿.header {
+    width: 100%;
+    border: 0px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.hamburger {
+    float: left;
+    padding: 10px;
+    border: 0px;
+}
+
+.title {
+    text-align: center;
+    padding: 10px;
+    border: 0px;
+}
+
+.help {
+    float: right;
+    padding: 10px;
+    border: 0px;
+}
+
+.table {
+    width: 100%;
+}
