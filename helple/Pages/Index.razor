@@ -1,11 +1,8 @@
 ﻿@page "/"
 
 <PageTitle>Helple - A Tool For Wordle</PageTitle>
-<div class="header">
-  <div class="hamburger"><img src="Images/menu-burger.svg" height="30" width="30" @onclick="OnHamburgerClick"/></div>
-  <div class="title"><h1>Helple</h1></div>
-  <div class="help"><img src="Images/interrogation.svg" height="30" width="30" @onclick="OnHelpClick" /></div>
-</div>
+
+<h1 class="text-center">Helple</h1>
 
 <div>
     <label @onload="ReadWordsFile">@Message</label>
@@ -101,11 +98,7 @@
                 }
             </select>
         </p>
-        <p class="text-center">
-            <img src="Images/angle-square-left.svg" height="15" width="15" @onclick="@OnPageBack" />
-            @PageHeader
-            <img src="Images/angle-square-right.svg"  height="15" width="15" @onclick="@OnPageFwd" />
-        </p>
+        <p class="text-center"><button @onclick="@OnPageBack">&lt;</button>@PageHeader<button @onclick="@OnPageFwd">&gt;</button></p>
         <table class="table">
             <tbody>
                 @for (int i=0; i<CurrentPage.Count; i+=@Columns)
@@ -132,16 +125,6 @@
 @inject HttpClient _client
 
 @code {
-    public void OnHamburgerClick()
-    {
-        Console.WriteLine("TODO: Delicious Hamburder");
-    }
-
-    public void OnHelpClick()
-    {
-        Console.WriteLine("TODO: HALP");
-    }
-
     public const int Columns = 4;
     // This is hella stupid, but I couldn't figure out how to bind the dropdown refering to an array memember. Brute force ftw.
     public ColorCode cc0;
