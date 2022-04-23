@@ -98,7 +98,11 @@
                 }
             </select>
         </p>
-        <p class="text-center"><button @onclick="@OnPageBack">&lt;</button>@PageHeader<button @onclick="@OnPageFwd">&gt;</button></p>
+        <p class="text-center">
+            <img src="images/angle-square-left.svg" height="20" width="20" @onclick="@OnPageBack" alt="back"/>
+            @PageHeader
+            <img src="images/angle-square-right.svg" height="20" width="20" @onclick="@OnPageFwd" alt="forward"/>
+        </p
         <table class="table">
             <tbody>
                 @for (int i=0; i<CurrentPage.Count; i+=@Columns)
