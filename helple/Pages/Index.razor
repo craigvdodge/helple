@@ -1,8 +1,11 @@
 ﻿@page "/"
 
 <PageTitle>Helple - A Tool For Wordle</PageTitle>
-
-<h1 class="text-center">Helple</h1>
+<div class="header">
+    <div class="hamburger"></div>
+    <div class="title"><h1 class="text-center">Helple</h1></div>
+    <div class="help"><img src="images/interrogation.svg" height=35 width=35 alt="help" @onclick="ShowHelp"/></div>
+</div>
 
 <div>
     <label @onload="ReadWordsFile">@Message</label>
@@ -102,7 +105,7 @@
             <img src="images/angle-square-left.svg" height="20" width="20" @onclick="@OnPageBack" alt="back"/>
             @PageHeader
             <img src="images/angle-square-right.svg" height="20" width="20" @onclick="@OnPageFwd" alt="forward"/>
-        </p
+        </p>
         <table class="table">
             <tbody>
                 @for (int i=0; i<CurrentPage.Count; i+=@Columns)
@@ -129,6 +132,10 @@
 @inject HttpClient _client
 
 @code {
+    [CascadingParameter] public IModalService Modal { get; set; } = default!;
+
+    void ShowHelp() => Modal.Show<Help>("About Helple");
+
     public const int Columns = 4;
     // This is hella stupid, but I couldn't figure out how to bind the dropdown refering to an array memember. Brute force ftw.
     public ColorCode cc0;
