@@ -2,7 +2,7 @@
 
 <PageTitle>Helple - A Tool For Wordle</PageTitle>
 <div class="header">
-    <div class="hamburger"></div>
+    <div class="hamburger"><img src="images/menu-burger.svg" height=30 width=30 alt="menu" @onclick="ShowHamburger"/></div>
     <div class="title"><h1 class="text-center">Helple</h1></div>
     <div class="help"><img src="images/interrogation.svg" height=30 width=30 alt="help" @onclick="ShowHelp"/></div>
 </div>
@@ -135,6 +135,12 @@
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
 
     void ShowHelp() => Modal.Show<Help>("About Helple");
+    void ShowHamburger()
+    {
+        var options = new ModalOptions();
+        options.Position = ModalPosition.TopLeft;
+        Modal.Show<Hamburger>("Links", options);
+    }
 
     public const int Columns = 4;
     // This is hella stupid, but I couldn't figure out how to bind the dropdown refering to an array memember. Brute force ftw.
