@@ -4,7 +4,7 @@
     justify-content: space-between;
 }
 
-.hamburger {
+.title-left {
     float: left;
 }
 
@@ -12,7 +12,7 @@
     justify-content : center;
 }
 
-.help {
+.title-right {
     float: right;
 }
 

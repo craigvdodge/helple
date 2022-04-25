@@ -1,0 +1,61 @@
+﻿<div>
+    <p>
+        <label>Sort word list:</label>
+        <select @bind="sortby">
+                @foreach (var s in Enum.GetValues<SortBy>())
+                {
+                    <option>@s.ToString()</option>
+                }
+            </select>
+    </p>
+    <hr />
+    <p>
+        <img src="images/disk.svg" width=40 height=40 style="padding: 10px" @onclick="SaveAndClose" alt="save" /><label @onclick="SaveAndClose">Save Settings</label>
+    </p>
+</div>
+
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+@code {
+
+    [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; } = default!;
+
+
+    public enum SortBy
+    {
+        Alphabetical = 0,
+        Score
+    }
+
+    private SortBy sortby = SortBy.Alphabetical;
+
+    private async void SaveAndClose()
+    {
+        await localStorage.SetItemAsync<string>("sort", sortby.ToString());
+        await BlazoredModal.CloseAsync(ModalResult.Ok(string.Empty));
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        string? sortFromStorage = await localStorage.GetItemAsync<string>("sort");
+
+        if (sortFromStorage == null)
+        {
+            sortby = SortBy.Alphabetical;
+        }
+        else
+        {
+            if (sortFromStorage == "Score")
+            {
+                sortby = SortBy.Score;
+            } 
+            else
+            {
+                sortby = SortBy.Alphabetical;
+            }
+
+        }
+
+    }
+
+}

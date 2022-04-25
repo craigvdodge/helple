@@ -2,13 +2,10 @@
 
 <PageTitle>Helple - A Tool For Wordle</PageTitle>
 <div class="header">
-    <div class="hamburger"><img src="images/menu-burger.svg" height=30 width=30 alt="menu" @onclick="ShowHamburger"/></div>
+    <div class="title-left"><img src="images/menu-burger.svg" height=50 width=50 alt="menu" @onclick="ShowHamburger" style="padding: 10px"/>
+        <img src="images/interrogation.svg" height=50 width=50 alt="help" @onclick="ShowHelp" style="padding: 10px"/></div>
     <div class="title"><h1>Helple</h1></div>
-    <div class="help"><img src="images/interrogation.svg" height=30 width=30 alt="help" @onclick="ShowHelp"/></div>
-</div>
-
-<div>
-    <label @onload="ReadWordsFile">@Message</label>
+    <div class="title-right"><img src="images/settings.svg" height=50 width=50 alt="settings" @onclick="ShowSettings" style="padding: 10px"/></div>
 </div>
 <div hidden="@hideGuessInput">
     <p class="text-center">
@@ -94,14 +91,6 @@
     else
     {
         <p class="text-center">
-            <select @onchange="OnSortChange">
-                @foreach (var s in Enum.GetValues<SortBy>())
-                {
-                    <option>@s.ToString()</option>
-                }
-            </select>
-        </p>
-        <p class="text-center">
             <img src="images/angle-square-left.svg" height="20" width="20" @onclick="@OnPageBack" alt="back"/>
             @PageHeader
             <img src="images/angle-square-right.svg" height="20" width="20" @onclick="@OnPageFwd" alt="forward"/>
@@ -128,8 +117,12 @@
     </table>
     }   
 </div>
+<div>
+    <label @onload="ReadWordsFile">@Message</label>
+</div>
 
 @inject HttpClient _client
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
 
 @code {
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
@@ -140,6 +133,18 @@
         var options = new ModalOptions();
         options.Position = ModalPosition.TopLeft;
         Modal.Show<Hamburger>("Links", options);
+    }
+    async void ShowSettings()
+    {
+        var settingsModal = Modal.Show<Settings>("Settings");
+        var results = await settingsModal.Result;
+        // Get value from modal
+        if (!results.Cancelled)
+        {
+            bool loadSettings = await LoadSettings();
+            SortWordList(SortOrder);
+            StateHasChanged();
+        }
     }
 
     public const int Columns = 4;
@@ -380,32 +385,46 @@
         return retval;
     }
 
-    private enum SortBy
-    {
-        Alphabetical = 0,
-        Score
-    }
+    private Settings.SortBy SortOrder;
 
-    private void OnSortChange(ChangeEventArgs e)
+    private async Task<bool> LoadSettings()
     {
-        if (e.Value != null)
+        var tempSort = await localStorage.GetItemAsync<string>("sort");
+        if (tempSort is null)
         {
-            if (e.Value.ToString() == "Alphabetical")
+            SortOrder = Settings.SortBy.Alphabetical;
+        }
+        else
+        {
+            string tempSortStr = (string)tempSort;
+            if (tempSortStr == "Score")
             {
-                Wordlist = Wordlist.OrderBy(o => o.Word).ToList();
+                SortOrder = Settings.SortBy.Score;
             }
-            else if (e.Value.ToString() == "Score")
+            else if (tempSortStr == "Alphabetical")
             {
-                Wordlist = Wordlist.OrderByDescending(o => o.Score).ToList();
+                SortOrder = Settings.SortBy.Alphabetical;
             }
             else
             {
-                return; // something went horribly wrong, bail now.
+                // Some kind of error. Log it to the console for detection
+                Console.WriteLine("Unkown sort type: " + tempSortStr);
+                SortOrder = Settings.SortBy.Alphabetical;
             }
-
-            AllPages = Paginate(ref Wordlist);
-            CurrentPage = AllPages[CurrentPageNumber];
         }
+        return true;
+    }
+
+    private void SortWordList(Settings.SortBy Order)
+    {
+        switch (Order)
+        {
+            case Settings.SortBy.Alphabetical : Wordlist = Wordlist.OrderBy(o => o.Word).ToList(); break;
+            case Settings.SortBy.Score : Wordlist = Wordlist.OrderByDescending(o => o.Score).ToList(); break;
+            default : return; // IDK what you did to get here, but bail now.
+        }
+        AllPages = Paginate(ref Wordlist);
+        CurrentPage = AllPages[CurrentPageNumber];
     }
 
     private string PageHeader
@@ -474,9 +493,8 @@
                 Wordlist.Add(e);
             }
 
+            SortWordList(SortOrder);
             AllPages = Paginate(ref Wordlist);
-            CurrentPage = AllPages[CurrentPageNumber];
-            Message = string.Empty;
             return true;
         }
         else
@@ -488,10 +506,11 @@
     }
 
     protected override async Task OnInitializedAsync()
-    {
+    {   
+        bool loadSettings = await LoadSettings();
         Message = "Loading word list...";
 
-        bool loadSuccess = await ReadWordsFile();
+        bool loadSuccess = await ReadWordsFile();  
     }
 
     private string Message = string.Empty;
