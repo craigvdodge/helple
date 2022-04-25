@@ -1,25 +1,19 @@
 ﻿.header {
     width: 100%;
-    border: 0px;
     display: flex;
     justify-content: space-between;
 }
 
 .hamburger {
     float: left;
-    padding: 10px;
-    border: 0px;
 }
 
 .title {
-    padding: 10px;
-    border: 0px;
+    justify-content : center;
 }
 
 .help {
     float: right;
-    padding: 10px;
-    border: 0px;
 }
 
 .table {
