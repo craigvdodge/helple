@@ -2,10 +2,10 @@
 
 <PageTitle>Helple - A Tool For Wordle</PageTitle>
 <div class="header">
-    <div class="title-left"><img src="images/menu-burger.svg" height=50 width=50 alt="menu" @onclick="ShowHamburger" style="padding: 10px"/>
-        <img src="images/interrogation.svg" height=50 width=50 alt="help" @onclick="ShowHelp" style="padding: 10px"/></div>
+    <div class="title-left"><img src="images/menu-burger.svg" height=40 width=40 alt="menu" @onclick="ShowHamburger" style="padding: 3px"/>
+        <img src="images/interrogation.svg" height=40 width=40 alt="help" @onclick="ShowHelp" style="padding: 3px"/></div>
     <div class="title"><h1>Helple</h1></div>
-    <div class="title-right"><img src="images/settings.svg" height=50 width=50 alt="settings" @onclick="ShowSettings" style="padding: 10px"/></div>
+    <div class="title-right"><img src="images/settings.svg" height=40 width=40 alt="settings" @onclick="ShowSettings" style="padding: 3px"/></div>
 </div>
 <div hidden="@hideGuessInput">
     <p class="text-center">
@@ -364,7 +364,7 @@
     public List<List<string>>? AllPages = null;
     public int CurrentPageNumber = 0;
 
-    private List<List<string>> Paginate(ref List<HelpleDataFile.Entry> flatWordList, int pagesize = 80)
+    private List<List<string>> Paginate(ref List<HelpleDataFile.Entry> flatWordList, int pagesize = 40)
     {
         List<List<string>> retval = new List<List<string>>();
 
@@ -509,8 +509,8 @@
     {   
         bool loadSettings = await LoadSettings();
         Message = "Loading word list...";
-
-        bool loadSuccess = await ReadWordsFile();  
+        bool loadSuccess = await ReadWordsFile();
+        Message = string.Empty;
     }
 
     private string Message = string.Empty;
