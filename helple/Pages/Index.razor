@@ -13,24 +13,24 @@
     <input @bind="Guess" @onkeydown="OnGuessEnter" @oninput="OnGuessInput"/>
 </p>
 </div>
-<div hidden="@hideGuessColorPicker">
-    <table class="table">
+<div hidden="@hideGuessColorPicker">  
+    <table class="table"> 
         <tbody class="text-center">
             <tr>
                 <td>
-                    @ColorCodingArray[0].Letter
+                    <LetterBox Letter=@ColorCodingArray[0].Letter Coding=@cc0.ToString()/>
                 </td>
                 <td>
-                    @ColorCodingArray[1].Letter
+                    <LetterBox Letter=@ColorCodingArray[1].Letter Coding=@cc1.ToString()/>
                 </td>
                 <td>
-                    @ColorCodingArray[2].Letter
+                    <LetterBox Letter=@ColorCodingArray[2].Letter Coding=@cc2.ToString()/>
                 </td>
                 <td>
-                    @ColorCodingArray[3].Letter
+                    <LetterBox Letter=@ColorCodingArray[3].Letter Coding=@cc3.ToString()/>
                 </td >
                 <td class="text-center">
-                    @ColorCodingArray[4].Letter
+                    <LetterBox Letter=@ColorCodingArray[4].Letter Coding=@cc4.ToString()/>
                 </td>
             </tr>
             <tr>

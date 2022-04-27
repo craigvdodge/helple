@@ -1,0 +1,40 @@
+﻿<div Class=@("tile " + GetCssClass())>@Letter</div> 
+
+@code {
+    [Parameter]
+    public string Letter { get; set; }
+
+    [Parameter]
+    public string Coding
+    {
+        get
+        {
+            return coding;
+        }
+        set
+        {
+            if (value == "Black" || value == "Yellow" || value == "Green")
+            {
+                coding = value;
+            }
+            else
+            {
+                coding = string.Empty;
+            }
+        }
+    }
+
+    private string coding = string.Empty;
+
+    private string GetCssClass()
+    {
+        return coding switch
+        {
+            "Black" => "tile-black",
+            "Yellow" => "tile-yellow",
+            "Green" => "tile-green",
+            _ => "tile-unknown"
+        };
+    }
+
+}

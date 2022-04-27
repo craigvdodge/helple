@@ -1,0 +1,42 @@
+﻿.tile-green {
+    font-weight: bold;
+    background-color: green;
+    color: white;
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    line-height: 30px;
+}
+
+.tile-yellow {
+    font-weight: bold;
+    background-color: goldenrod;
+    color: white;
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    line-height: 30px;
+}
+
+.tile-black {
+    font-weight: bold;
+    background-color: dimgray;
+    color: white;
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    line-height: 30px;
+}
+
+.tile-unknown {
+    font-weight: bold;
+    background-color: white;
+    color: black;
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    line-height: 27px;
+    border: 3px;
+    border-color: black;
+    border-style: solid;
+}
