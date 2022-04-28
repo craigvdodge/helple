@@ -13,7 +13,7 @@
 </div>
 
 @code {
-    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; } = default!;
 
     [Parameter]
     public string Letter
@@ -34,7 +34,7 @@
             }
         }
     }
-    private string letter;
+    private string letter = string.Empty;
 
     private void OnSelect(string Code)
     {
