@@ -2,7 +2,26 @@
 
 @code {
     [Parameter]
-    public string Letter { get; set; }
+    public string Letter
+    {
+        get
+        {
+            return letter;
+        }
+        set
+        {
+            if (value == null)
+            {
+                letter = "�";
+            }
+            else
+            {
+                letter = value;
+            }
+        }
+    }
+
+    private string letter;
 
     [Parameter]
     public string Coding
