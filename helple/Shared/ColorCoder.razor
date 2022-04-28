@@ -1,0 +1,43 @@
+﻿<div>
+    <table>
+        <tr><td style="padding: 10px"><div @onclick="@(() => OnSelect("Black"))">
+            <LetterBox Letter=@Letter Coding="Black" />
+        </div></td></tr>
+        <tr><td style="padding: 10px"><div @onclick="@(() => OnSelect("Yellow"))">
+            <LetterBox Letter=@Letter Coding="Yellow" />
+        </div></td></tr> 
+        <tr><td style="padding: 10px"><div @onclick="@(() => OnSelect("Green"))">
+            <LetterBox Letter=@Letter Coding="Green" />
+        </div></td></tr>
+    </table>
+</div>
+
+@code {
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+
+    [Parameter]
+    public string Letter
+    {
+        get
+        {
+            return letter;
+        }
+        set
+        {
+            if (value == null)
+            {
+                letter = "�";
+            }
+            else
+            {
+                letter = value;
+            }
+        }
+    }
+    private string letter;
+
+    private void OnSelect(string Code)
+    {
+        ModalInstance.CloseAsync(ModalResult.Ok(Code));
+    }
+}

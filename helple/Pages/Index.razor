@@ -16,63 +16,27 @@
 <div hidden="@hideGuessColorPicker">  
     <table class="table"> 
         <tbody class="text-center">
+            <!-- This should be a loop but I keep getting bounds errors no matter what I do so here we are. -->
             <tr>
-                <td>
-                    <LetterBox Letter=@ColorCodingArray[0].Letter Coding=@cc0.ToString()/>
+                <td><div @onclick="@(() => OnLetterTileClick(@ColorCodingArray[0].Letter, 0))">
+                        <LetterBox Letter=@ColorCodingArray[0].Letter Coding=@ColorCodingArray[0].Code.ToString() />
+                    </div>
                 </td>
-                <td>
-                    <LetterBox Letter=@ColorCodingArray[1].Letter Coding=@cc1.ToString()/>
+                <td><div @onclick="@(() => OnLetterTileClick(@ColorCodingArray[1].Letter, 1))">
+                        <LetterBox Letter=@ColorCodingArray[1].Letter Coding=@ColorCodingArray[1].Code.ToString() />
+                    </div>
                 </td>
-                <td>
-                    <LetterBox Letter=@ColorCodingArray[2].Letter Coding=@cc2.ToString()/>
+                <td><div @onclick="@(() => OnLetterTileClick(@ColorCodingArray[2].Letter, 2))">
+                        <LetterBox Letter=@ColorCodingArray[2].Letter Coding=@ColorCodingArray[2].Code.ToString() />
+                    </div>
                 </td>
-                <td>
-                    <LetterBox Letter=@ColorCodingArray[3].Letter Coding=@cc3.ToString()/>
-                </td >
-                <td class="text-center">
-                    <LetterBox Letter=@ColorCodingArray[4].Letter Coding=@cc4.ToString()/>
+                <td><div @onclick="@(() => OnLetterTileClick(@ColorCodingArray[3].Letter, 3))">
+                        <LetterBox Letter=@ColorCodingArray[3].Letter Coding=@ColorCodingArray[3].Code.ToString() />
+                    </div>
                 </td>
-            </tr>
-            <tr>
-                <td> 
-                    <select @bind="cc0">
-                    @foreach (var value in Enum.GetValues<ColorCode>())
-                    {
-                        <option>@value.ToString()</option>
-                    }
-                    </select>
-                </td>
-                <td>
-                    <select @bind="cc1">
-                    @foreach (var value in Enum.GetValues<ColorCode>())
-                    {
-                        <option>@value.ToString()</option>
-                    }
-                    </select>
-                </td>
-                <td>
-                    <select @bind="cc2">
-                    @foreach (var value in Enum.GetValues<ColorCode>())
-                    {
-                        <option>@value.ToString()</option>
-                    }
-                    </select>
-                </td>
-                <td>
-                    <select @bind="cc3">
-                    @foreach (var value in Enum.GetValues<ColorCode>())
-                    {
-                        <option>@value.ToString()</option>
-                    }
-                    </select>
-                </td>
-                <td>
-                    <select @bind="cc4">
-                    @foreach (var value in Enum.GetValues<ColorCode>())
-                    {
-                        <option>@value.ToString()</option>
-                    }
-                    </select>
+                <td><div @onclick="@(() => OnLetterTileClick(@ColorCodingArray[4].Letter, 4))">
+                        <LetterBox Letter=@ColorCodingArray[4].Letter Coding=@ColorCodingArray[4].Code.ToString() />
+                    </div>
                 </td>
             </tr>
             <tr>
@@ -148,12 +112,6 @@
     }
 
     public const int Columns = 4;
-    // This is hella stupid, but I couldn't figure out how to bind the dropdown refering to an array memember. Brute force ftw.
-    public ColorCode cc0;
-    public ColorCode cc1;
-    public ColorCode cc2;
-    public ColorCode cc3;
-    public ColorCode cc4;
 
     // "select" means user has not entered color code yet
     public enum ColorCode
@@ -188,6 +146,34 @@
         }
 
         return retval;
+    }
+
+    private async void OnLetterTileClick(string l, int index)
+    {
+        int humanReadablePlace = index + 1;
+        Console.WriteLine(index.ToString());
+        var parameters = new ModalParameters();
+        parameters.Add("Letter", l);
+
+        var cc = Modal.Show<ColorCoder>("Letter " + humanReadablePlace.ToString() + ":", parameters);
+        var result = await cc.Result;
+
+        if (!result.Cancelled)
+        {
+            if (result.Data.ToString() == "Black")
+            {
+                ColorCodingArray[index].Code = ColorCode.Black;
+            }
+            else if (result.Data.ToString() == "Yellow")
+            {
+                ColorCodingArray[index].Code = ColorCode.Yellow;
+            }
+            else if (result.Data.ToString() == "Green")
+            {
+                ColorCodingArray[index].Code = ColorCode.Green;
+            }
+            StateHasChanged();
+        }
     }
 
     private string? Guess { get; set; }
@@ -231,13 +217,6 @@
 
     private void OnColorCodeClick()
     {
-        // xfer codes from ccx variables to ColorCodingArray
-        ColorCodingArray[0].Code = cc0;
-        ColorCodingArray[1].Code = cc1;
-        ColorCodingArray[2].Code = cc2;
-        ColorCodingArray[3].Code = cc3;
-        ColorCodingArray[4].Code = cc4;
-
         // Validation
 
         for (int i=0; i<5; i++)
@@ -275,11 +254,10 @@
             cci.Code = ColorCode.Select;
             cci.Duplicates.Clear();
         }
-        cc0 = ColorCode.Select;
-        cc1 = ColorCode.Select;
-        cc2 = ColorCode.Select;
-        cc3 = ColorCode.Select;
-        cc4 = ColorCode.Select;
+        foreach (ColorCodingInfo cci in ColorCodingArray)
+        {
+            cci.Code = ColorCode.Select;
+        }
         Message = string.Empty;
     }
 
