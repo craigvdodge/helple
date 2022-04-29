@@ -1,21 +1,116 @@
 ﻿<div>
-    <p><b>Helple</b> is a filterable word list for playing Wordle (or similar). To
-        filter the word list, enter your Wordle guess. Helple will then prompt for the color of each letter
-        from the Wordle response. Any words that can be eliminated will then be removed.
+    <select @onchange="OnTopicChange">
+        @foreach (int i in topics.Keys)
+        {
+            <option value=@i>@topics[i]</option>
+        }
+    </select>
+</div>
+<hr />
+<div hidden="@IsHidden("About")">
+    <p><b>Helple</b> is a tool to help when playing Wordle. It's a word
+        list that eliminates words from the list based on the information
+        you get back from your Wordle guesses. 
     </p>
-    <p>You can sort the list either alphabetically or by "score". Words with more unique and frequently occuring
-        letters are given a higher relative "score" by Helple. 
+    <p>
+        For more information on specific topics, please select from the drop-down above.
     </p>
+</div>
+<div hidden="@IsHidden("Word List")">
     <p>
         The word list is broken up into pages. To see other pages, use
         <img src="images/angle-square-left.svg" height="20" width="20" alt="left"/> 
         and <img src="images/angle-square-right.svg" height="20" width="20" alt="right" />
         or you can also swipe left and right if you're on a touch-enabled device.
-    </p>  
+    </p> 
+    <p>
+        The word list can be sorted alphabetically (the default) or by a "score" that
+        Helple gives each word to try and find good Wordle guesses. To change how the 
+        word list is sorted, go to Settings (<img src="images/settings.svg" height="20" width="20" alt="gear"/>),
+        change the Sort Word List value to the desired sort type, and save settings
+        (<img src="images/disk.svg" height="20" width="20" alt="save"/>).
+    </p>
+     
+</div>
+<div hidden="@IsHidden("Filtering")">
+    <p>
+        To begin filtering the word list, enter your 5-letter Wordle guess in the text 
+        box at the top of the Helple page, and press enter. Letters that you haven't 
+        selected the Wordle response color will appear as black text on white background 
+        with a black boarder, like:
+        <table>
+            <tr>
+                <td><LetterBox Letter=t Coding="" /></td>
+                <td><LetterBox Letter=h Coding="" /></td>
+                <td><LetterBox Letter=i Coding="" /></td>
+                <td><LetterBox Letter=s Coding="" /></td>
+            </tr>
+        </table>
+    </p>
+    <p>
+        To select the Wordle color, click/tap on each letter and select from the color
+        from the popup. Colors have the same meaning as Wordle and each letter is either
+        <table>
+            <tr>
+                <td><LetterBox Letter=b Coding="Black" /></td>
+                <td><LetterBox Letter=l Coding="Black" /></td>
+                <td><LetterBox Letter=a Coding="Black" /></td>
+                <td><LetterBox Letter=c Coding="Black" /></td>
+                <td><LetterBox Letter=k Coding="Black" /></td>
+                <td>,</td>
+            </tr>
+        </table>
+        <table>
+            <tr>
+                <td><LetterBox Letter=y Coding="Yellow" /></td>
+                <td><LetterBox Letter=e Coding="Yellow" /></td>
+                <td><LetterBox Letter=l Coding="Yellow" /></td>
+                <td><LetterBox Letter=l Coding="Yellow" /></td>
+                <td><LetterBox Letter=o Coding="Yellow" /></td>
+                <td><LetterBox Letter=w Coding="Yellow" /></td>
+            </tr>
+        </table>
+        or
+        <table>
+            <tr>
+                <td><LetterBox Letter=g Coding="Green" /></td>
+                <td><LetterBox Letter=r Coding="Green" /></td>
+                <td><LetterBox Letter=e Coding="Green" /></td>
+                <td><LetterBox Letter=e Coding="Green" /></td>
+                <td><LetterBox Letter=n Coding="Green" /></td>
+            </tr>
+        </table>
+    </p>
 </div>
 
 @code {
-
     [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; } = default!;
 
+    public Help()
+    {
+        topics = new SortedList<int, string>();
+        topics.Add(0, "About");
+        topics.Add(1, "Word List");
+        topics.Add(2, "Filtering");
+        currentTopic = 0;
+    }
+
+    private bool IsHidden(string s)
+    {
+        if (topics[currentTopic] == s)
+        {
+            return false;
+        }
+        return true;
+    }
+
+    private void OnTopicChange(ChangeEventArgs e)
+    {
+        if (e.Value != null && e.Value.ToString() != null)
+        {
+            currentTopic = int.Parse(e.Value.ToString());
+        }
+    }
+    private SortedList<int, string> topics;
+    private int currentTopic=0;
 }

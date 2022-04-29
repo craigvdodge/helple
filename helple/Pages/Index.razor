@@ -91,7 +91,7 @@
 @code {
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
 
-    void ShowHelp() => Modal.Show<Help>("About Helple");
+    void ShowHelp() => Modal.Show<Help>("Help");
     void ShowHamburger()
     {
         var options = new ModalOptions();
