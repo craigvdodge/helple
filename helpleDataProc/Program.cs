@@ -2,8 +2,20 @@
 if (args.Length < 2)
 {
     Console.WriteLine("Helple Data Processor");
-    Console.WriteLine("Usage: helpleDataProc input-file output-file");
+    Console.WriteLine("Usage: helpleDataProc input-file output-file [common file]");
     return -1;
+}
+
+string[]? common = null;
+// load common word list
+if (args.Length > 2)
+{
+    Console.WriteLine("Using common file " + args[2]);
+    common = File.ReadAllLines(args[2]);
+    for (int i = 0; i < common.Length; i++)
+    {
+        common[i] = common[i].Trim().ToUpper();
+    }
 }
 
 string[] words = File.ReadAllLines(args[0]);
@@ -58,6 +70,15 @@ foreach (string word in outputList.Keys)
     foreach (char c in deDupedString)
     {
         score += letterScores[c];
+    }
+
+    if (common != null)
+    {
+        if (common.Contains(word.ToUpper()))
+        {
+            int bonus = score / 4;
+            score = score + bonus;
+        }
     }
 
     dataFile.AddWord(word, score);

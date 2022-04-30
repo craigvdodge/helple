@@ -2,7 +2,7 @@
   "profiles": {
     "helpleDataProc": {
       "commandName": "Project",
-      "commandLineArgs": "words_raw.txt words.txt"
+      "commandLineArgs": "words_raw.txt words.txt common.txt"
     }
   }
 }
