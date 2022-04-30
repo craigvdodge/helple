@@ -457,3 +457,4 @@ $RECYCLE.BIN/
 # Shouldn't be checked in.
 
 helple/wwwroot/words.txt
+helple/wwwroot/words.txt.gz

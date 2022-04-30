@@ -1,6 +1,7 @@
 ﻿namespace HelpleDataFile
 {
     using System.Text.Json;
+    using System.IO.Compression;
     public class DataFile
     {
         public DataFile()
@@ -26,9 +27,14 @@
                 File.Delete(Filename);
             }
             JsonSerializerOptions options = new JsonSerializerOptions { WriteIndented = true };
-            using (StreamWriter sw = File.CreateText(Filename))
+            using (FileStream fs = File.Create(Filename))
             {
-                sw.Write(JsonSerializer.Serialize(entries, options));
+                using (GZipStream gz = new GZipStream(fs, CompressionMode.Compress))
+                {
+                    string data = JsonSerializer.Serialize(entries, options);
+                    byte[] dataAsBytes = System.Text.Encoding.UTF8.GetBytes(data);
+                    gz.Write(dataAsBytes);
+                }
             }
         }
 
@@ -42,11 +48,18 @@
 
             try
             {
-                var readTask = HttpClient.GetStringAsync(Filename);
-                await readTask;
+                var readTask = HttpClient.GetStreamAsync(Filename);
+                await readTask;              
+                using (GZipStream gzip = new GZipStream(readTask.Result, CompressionMode.Decompress))
+                {
+                    using (StreamReader reader = new StreamReader(gzip))
+                    {
+                        string data = reader.ReadToEnd();
 #pragma warning disable CS8601 // Possible null reference assignment.
-                entries = JsonSerializer.Deserialize<List<Entry>>(readTask.Result);
+                        entries = JsonSerializer.Deserialize<List<Entry>>(data);
 #pragma warning restore CS8601 // Possible null reference assignment.
+                    }
+                }
 
                 _extendedInfo = string.Empty;
                 return true;

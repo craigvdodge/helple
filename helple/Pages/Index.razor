@@ -463,7 +463,7 @@
     {
         HelpleDataFile.DataFile dataFile = new HelpleDataFile.DataFile(_client);
 
-        if (await dataFile.Read("words.txt"))
+        if (await dataFile.Read("words.txt.gz"))
         {
             Wordlist.Clear();
             foreach (HelpleDataFile.Entry e in dataFile.Entries)
