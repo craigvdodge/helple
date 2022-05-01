@@ -2,10 +2,12 @@
 
 <PageTitle>Helple - A Tool For Wordle</PageTitle>
 <div class="header">
-    <div class="title-left"><img src="images/menu-burger.svg" height=40 width=40 alt="menu" @onclick="ShowHamburger" style="padding: 3px"/>
-        <img src="images/interrogation.svg" height=40 width=40 alt="help" @onclick="ShowHelp" style="padding: 3px"/></div>
+    <div class="title-left"><img src="images/menu-burger.svg" height=30 width=30 alt="menu" @onclick="ShowHamburger" style="padding: 2px"/>
+        <img src="images/interrogation.svg" height=30 width=30 alt="help" @onclick="ShowHelp" style="padding: 2px"/></div>
     <div class="title"><h1>Helple</h1></div>
-    <div class="title-right"><img src="images/settings.svg" height=40 width=40 alt="settings" @onclick="ShowSettings" style="padding: 3px"/></div>
+    <div class="title-right">
+        <img src="images/undo.svg" height=30 width=30 alt="undo" @onclick="Undo" style="padding: 2px"/>
+        <img src="images/settings.svg" height=30 width=30 alt="settings" @onclick="ShowSettings" style="padding: 2px"/></div>
 </div>
 <div hidden="@hideGuessInput">
     <p class="text-center">
@@ -111,6 +113,47 @@
         }
     }
 
+    async void Undo()
+    {
+        var options = new ModalOptions()
+        {
+            HideCloseButton = true
+        };
+        var parameters = new ModalParameters();
+
+        // Get Context, pt 1
+        if (hideGuessInput) // We're color-coding a word. User wants to go back.
+        {
+            parameters.Add("Message", "Disard any colors here and select a different word?");
+        }
+        else // We're at top-level. User wants to undo filtering (reload word list)
+        {
+            parameters.Add("Message","Reload full word list and discard any filtering?");
+        }
+        var confirm = Modal.Show<Confirm>("Undo", parameters, options);
+        var result = await confirm.Result;
+
+        if (result.Cancelled) 
+        {
+            return; // We don't have to do anything if it's canceled.
+        }
+
+        // Get Context, pt 1
+        if (hideGuessInput) // We're color-coding a word. User wants to go back.
+        {
+            ClearColorCodingInfo();
+            hideGuessColorPicker = true;
+            hideGuessInput = false;
+            StateHasChanged();
+        }
+        else // We're at top-level. User wants to undo filtering (reload word list)
+        {
+            bool loadSuccess = await ReadWordsFile();
+            StateHasChanged();
+        }
+
+    }
+
     public const int Columns = 4;
 
     // "select" means user has not entered color code yet
@@ -151,7 +194,6 @@
     private async void OnLetterTileClick(string l, int index)
     {
         int humanReadablePlace = index + 1;
-        Console.WriteLine(index.ToString());
         var parameters = new ModalParameters();
         parameters.Add("Letter", l);
 
@@ -248,17 +290,18 @@
         hideGuessColorPicker = true;
         hideGuessInput = false;
         Guess = null;
+        ClearColorCodingInfo();
+        Message = string.Empty;
+    }
+
+    private void ClearColorCodingInfo()
+    {
         foreach (ColorCodingInfo cci in ColorCodingArray)
         {
             cci.Letter = string.Empty;
             cci.Code = ColorCode.Select;
             cci.Duplicates.Clear();
         }
-        foreach (ColorCodingInfo cci in ColorCodingArray)
-        {
-            cci.Code = ColorCode.Select;
-        }
-        Message = string.Empty;
     }
 
     private void GuessDupLetScan()

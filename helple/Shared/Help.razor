@@ -82,6 +82,24 @@
         </table>
     </p>
 </div>
+<div hidden="@IsHidden("Undo")">
+<p>
+    In the upper right you will find the Undo Button (<img src="images/undo.svg" height="20" width="20" alt="undo"/>).
+    This button will do one of two things, depending on the context of what you're doing.
+</p>
+<p>
+    If you are at the "top level", where Helple has the text box to enter your word, Undoing here will reload the
+    entire word list.
+</p>
+<p>
+    If you are entering color codes for the word you entered, Undo will return you to the word entry level and discard
+    any color info.
+</p>
+<p>
+    In both contexts, you will be asked to confirm before action is taken.
+</p>
+
+</div>
 
 @code {
     [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; } = default!;
@@ -92,6 +110,7 @@
         topics.Add(0, "About");
         topics.Add(1, "Word List");
         topics.Add(2, "Filtering");
+        topics.Add(3, "Undo");
         currentTopic = 0;
     }
 
@@ -108,7 +127,9 @@
     {
         if (e.Value != null && e.Value.ToString() != null)
         {
+            #pragma warning disable CS8604
             currentTopic = int.Parse(e.Value.ToString());
+            #pragma warning restore CS8604
         }
     }
     private SortedList<int, string> topics;
