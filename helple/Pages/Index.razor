@@ -292,6 +292,10 @@
         Guess = null;
         ClearColorCodingInfo();
         Message = string.Empty;
+        if (Wordlist.Count == 0)
+        {
+            Message = "Word list is empty.";
+        }
     }
 
     private void ClearColorCodingInfo()
