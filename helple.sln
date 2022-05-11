@@ -12,6 +12,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "helpleDataProc", "helpleDat
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HelpleDataFile", "HelpleDataFile\HelpleDataFile.csproj", "{19A50DB4-88BC-414E-9B7E-C3058CE2EED0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HelpleSharedWeb", "HelpleSharedWeb\HelpleSharedWeb.csproj", "{8158CEB4-8FE1-4408-92B5-0B0C5CE51593}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,6 +32,10 @@ Global
 		{19A50DB4-88BC-414E-9B7E-C3058CE2EED0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{19A50DB4-88BC-414E-9B7E-C3058CE2EED0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{19A50DB4-88BC-414E-9B7E-C3058CE2EED0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8158CEB4-8FE1-4408-92B5-0B0C5CE51593}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8158CEB4-8FE1-4408-92B5-0B0C5CE51593}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8158CEB4-8FE1-4408-92B5-0B0C5CE51593}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8158CEB4-8FE1-4408-92B5-0B0C5CE51593}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

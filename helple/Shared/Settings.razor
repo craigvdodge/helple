@@ -1,8 +1,8 @@
 ﻿<div>
     <p>
         <label>Sort word list:</label>
-        <select @bind="sortby">
-                @foreach (var s in Enum.GetValues<SortBy>())
+        <select @bind="settingsModel.SortOrder">
+                @foreach (var s in Enum.GetValues<SortOrder>())
                 {
                     <option>@s.ToString()</option>
                 }
@@ -20,6 +20,7 @@
 
     [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; } = default!;
 
+    private SettingsModel? settingsModel;
 
     public enum SortBy
     {
@@ -31,31 +32,14 @@
 
     private async void SaveAndClose()
     {
-        await localStorage.SetItemAsync<string>("sort", sortby.ToString());
+        await settingsModel.SaveToLocalStorage();
         await BlazoredModal.CloseAsync(ModalResult.Ok(string.Empty));
     }
 
     protected override async Task OnInitializedAsync()
     {
-        string? sortFromStorage = await localStorage.GetItemAsync<string>("sort");
-
-        if (sortFromStorage == null)
-        {
-            sortby = SortBy.Alphabetical;
-        }
-        else
-        {
-            if (sortFromStorage == "Score")
-            {
-                sortby = SortBy.Score;
-            } 
-            else
-            {
-                sortby = SortBy.Alphabetical;
-            }
-
-        }
-
+        settingsModel = new SettingsModel(localStorage);
+        await settingsModel.LoadFromLocalStorage();
     }
 
 }

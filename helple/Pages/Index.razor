@@ -107,8 +107,10 @@
         // Get value from modal
         if (!results.Cancelled)
         {
-            bool loadSettings = await LoadSettings();
-            SortWordList(SortOrder);
+            #pragma warning disable 8602
+            bool loadSettings = await settingsModel.LoadFromLocalStorage();
+            #pragma warning restore 8602
+            SortWordList(settingsModel.SortOrder);
             StateHasChanged();
         }
     }
@@ -410,42 +412,14 @@
         return retval;
     }
 
-    private Settings.SortBy SortOrder;
+    private SettingsModel? settingsModel;
 
-    private async Task<bool> LoadSettings()
-    {
-        var tempSort = await localStorage.GetItemAsync<string>("sort");
-        if (tempSort is null)
-        {
-            SortOrder = Settings.SortBy.Alphabetical;
-        }
-        else
-        {
-            string tempSortStr = (string)tempSort;
-            if (tempSortStr == "Score")
-            {
-                SortOrder = Settings.SortBy.Score;
-            }
-            else if (tempSortStr == "Alphabetical")
-            {
-                SortOrder = Settings.SortBy.Alphabetical;
-            }
-            else
-            {
-                // Some kind of error. Log it to the console for detection
-                Console.WriteLine("Unkown sort type: " + tempSortStr);
-                SortOrder = Settings.SortBy.Alphabetical;
-            }
-        }
-        return true;
-    }
-
-    private void SortWordList(Settings.SortBy Order)
+    private void SortWordList(SortOrder Order)
     {
         switch (Order)
         {
-            case Settings.SortBy.Alphabetical : Wordlist = Wordlist.OrderBy(o => o.Word).ToList(); break;
-            case Settings.SortBy.Score : Wordlist = Wordlist.OrderByDescending(o => o.Score).ToList(); break;
+            case SortOrder.Alphabetical : Wordlist = Wordlist.OrderBy(o => o.Word).ToList(); break;
+            case SortOrder.Score : Wordlist = Wordlist.OrderByDescending(o => o.Score).ToList(); break;
             default : return; // IDK what you did to get here, but bail now.
         }
         AllPages = Paginate(ref Wordlist);
@@ -518,7 +492,9 @@
                 Wordlist.Add(e);
             }
 
-            SortWordList(SortOrder);
+            #pragma warning disable 8602
+            SortWordList(settingsModel.SortOrder);
+            #pragma warning restore 8602
             AllPages = Paginate(ref Wordlist);
             return true;
         }
@@ -531,8 +507,9 @@
     }
 
     protected override async Task OnInitializedAsync()
-    {   
-        bool loadSettings = await LoadSettings();
+    {
+        settingsModel = new SettingsModel(localStorage);
+        bool loadSettings = await settingsModel.LoadFromLocalStorage();
         Message = "Loading word list...";
         bool loadSuccess = await ReadWordsFile();
         Message = string.Empty;
