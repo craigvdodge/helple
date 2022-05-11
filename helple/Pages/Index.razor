@@ -63,10 +63,10 @@
         </p>
         <table class="table">
             <tbody>
-                @for (int i=0; i<CurrentPage.Count; i+=@Columns)
+                @for (int i=0; i<CurrentPage.Count; i+=@settingsModel.Columns)
                 {
                     <tr>
-                        @for(int j=0; j<@Columns; j++)
+                        @for(int j=0; j<@settingsModel.Columns; j++)
                         {
                             @if (i+j >= CurrentPage.Count)
                             {
@@ -155,8 +155,6 @@
         }
 
     }
-
-    public const int Columns = 4;
 
     // "select" means user has not entered color code yet
     public enum ColorCode
@@ -391,9 +389,18 @@
     public List<List<string>>? AllPages = null;
     public int CurrentPageNumber = 0;
 
-    private List<List<string>> Paginate(ref List<HelpleDataFile.Entry> flatWordList, int pagesize = 40)
+    private List<List<string>> Paginate(ref List<HelpleDataFile.Entry> flatWordList)
     {
         List<List<string>> retval = new List<List<string>>();
+        int pagesize;
+        if (settingsModel == null)
+        {
+            pagesize = 40;
+        }
+        else
+        {
+            pagesize = settingsModel.Columns * settingsModel.Rows;
+        }
 
         int currentword = 0;
         retval.Add(new List<string>());

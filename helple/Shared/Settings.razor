@@ -1,5 +1,5 @@
 ﻿<div>
-    <p>
+    <div>
         <label>Sort word list:</label>
         <select @bind="settingsModel.SortOrder">
                 @foreach (var s in Enum.GetValues<SortOrder>())
@@ -7,11 +7,31 @@
                     <option>@s.ToString()</option>
                 }
             </select>
-    </p>
-    <hr />
-    <p>
+        <hr />
+    </div>
+    <div>
+        <table>
+            <tr><td colspan="4">Word list:</td></tr>
+            <tr><td>Columns:</td> 
+                <td><img src="images/angle-square-left.svg" style="padding: 5px" height="30" width="30" @onclick="ColMinus"/></td>
+                <td>@settingsModel.Columns</td>
+                <td><img src="images/angle-square-right.svg" style="padding: 5px" height="30" width="30" @onclick="ColPlus"/></td>
+                </tr>
+            <tr><td>Rows:</td> 
+                <td><img src="images/angle-square-left.svg" style="padding: 5px" height="30" width="30" @onclick="RowMinus"/></td>
+                <td>@settingsModel.Rows</td>
+                <td><img src="images/angle-square-right.svg" style="padding: 5px" height="30" width="30" @onclick="RowPlus"/></td>
+            </tr>
+        </table>
+        <hr />
+    </div>
+    <div style="padding: 10px">
+        <button @onclick="RevertToDefault">Reset to defaults</button>
+        <hr />
+    </div>
+    <div style="padding: 5px">
         <img src="images/disk.svg" width=25 height=25 style="padding: 3px" @onclick="SaveAndClose" alt="save" /><label @onclick="SaveAndClose">Save Settings</label>
-    </p>
+    </div>
 </div>
 
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
@@ -42,4 +62,41 @@
         await settingsModel.LoadFromLocalStorage();
     }
 
+    private void ColMinus()
+    {
+        if (settingsModel.Columns > 1)
+        {
+            settingsModel.Columns = settingsModel.Columns - 1;
+        }
+    }
+
+    private void ColPlus()
+    {
+        if (settingsModel.Columns < 256) 
+        {
+            settingsModel.Columns = settingsModel.Columns + 1;
+        }
+    }
+
+    private void RowMinus()
+    {
+        if (settingsModel.Rows > 1)
+        {
+            settingsModel.Rows = settingsModel.Rows - 1;
+        }
+    }
+
+    private void RowPlus()
+    {
+        if (settingsModel.Rows < 256)
+        {
+            settingsModel.Rows = settingsModel.Rows + 1;
+        }
+    }
+
+    private async void RevertToDefault()
+    {
+        settingsModel.Clear();
+        await BlazoredModal.CloseAsync(ModalResult.Ok(string.Empty));
+    }
 }
