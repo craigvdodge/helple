@@ -96,7 +96,7 @@
 
     private async void RevertToDefault()
     {
-        settingsModel.Clear();
+        await settingsModel.Clear();
         await BlazoredModal.CloseAsync(ModalResult.Ok(string.Empty));
     }
 }
