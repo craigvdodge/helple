@@ -15,7 +15,6 @@
 	  <UseNativeHttpHandler>true</UseNativeHttpHandler>
 	  <UseSystemResourceKeys>true</UseSystemResourceKeys>
 	  <BlazorEnableTimeZoneSupport>false</BlazorEnableTimeZoneSupport>
-	  <RunAOTCompilation>true</RunAOTCompilation>
   </PropertyGroup>
 
   <ItemGroup>
