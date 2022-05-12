@@ -4,20 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-	<PublishTrimmed>true</PublishTrimmed>
-	<TrimmerRemoveSymbols>true</TrimmerRemoveSymbols>
-    <EnableUnsafeBinaryFormatterSerialization>false</EnableUnsafeBinaryFormatterSerialization>
-    <EnableUnsafeUTF7Encoding>false</EnableUnsafeUTF7Encoding>
-	<EventSourceSupport>false</EventSourceSupport>
-    <HttpActivityPropagationSupport>false</HttpActivityPropagationSupport>
-	<InvariantGlobalization>true</InvariantGlobalization>
-    <MetadataUpdaterSupport>false</MetadataUpdaterSupport>
-    <UseNativeHttpHandler>true</UseNativeHttpHandler>
-	<UseSystemResourceKeys>true</UseSystemResourceKeys>
-	<BlazorEnableTimeZoneSupport>false</BlazorEnableTimeZoneSupport>
-    <RunAOTCompilation>true</RunAOTCompilation>
   </PropertyGroup>
-
 
   <ItemGroup>
     <PackageReference Include="Blazored.LocalStorage" Version="4.2.0" />

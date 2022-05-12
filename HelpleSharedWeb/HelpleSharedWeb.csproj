@@ -4,17 +4,6 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-	  <PublishTrimmed>true</PublishTrimmed>
-	  <TrimmerRemoveSymbols>true</TrimmerRemoveSymbols>
-	  <EnableUnsafeBinaryFormatterSerialization>false</EnableUnsafeBinaryFormatterSerialization>
-	  <EnableUnsafeUTF7Encoding>false</EnableUnsafeUTF7Encoding>
-	  <EventSourceSupport>false</EventSourceSupport>
-	  <HttpActivityPropagationSupport>false</HttpActivityPropagationSupport>
-	  <InvariantGlobalization>true</InvariantGlobalization>
-	  <MetadataUpdaterSupport>false</MetadataUpdaterSupport>
-	  <UseNativeHttpHandler>true</UseNativeHttpHandler>
-	  <UseSystemResourceKeys>true</UseSystemResourceKeys>
-	<BlazorEnableTimeZoneSupport>false</BlazorEnableTimeZoneSupport>
   </PropertyGroup>
 
   <ItemGroup>
