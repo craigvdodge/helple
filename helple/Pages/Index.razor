@@ -226,7 +226,7 @@
             Guess = e.Value.ToString();
         }
     }
-    private void OnGuessEnter(KeyboardEventArgs e)
+    private async void OnGuessEnter(KeyboardEventArgs e)
     {
         if (e.Code == "Enter" || e.Code == "NumpadEnter")
         {
@@ -236,7 +236,25 @@
                 return;
             }
             Guess = Guess.ToUpper();
-            // TODO: more checking here
+
+            // Check if that's even in the word list
+            if (Wordlist.FirstOrDefault(a => a.Word == Guess) == null)
+            {
+                var options = new ModalOptions()
+                {
+                    HideCloseButton = true
+                };
+                var parameters = new ModalParameters();
+                parameters.Add("Message", Guess + " is not in word list, continue?");
+                var confirm = Modal.Show<Confirm>("Not found", parameters, options);
+                var result = await confirm.Result;
+                Console.WriteLine(result.ToString());
+
+                if (result.Cancelled) 
+                {
+                    return; 
+                }
+            }
             Message = string.Empty;
             hideGuessColorPicker = false;
             hideGuessInput = true;
@@ -247,6 +265,7 @@
                 ColorCodingArray[i].Letter = Guess.Substring(i, 1);
                 ColorCodingArray[i].Code = ColorCode.Select;
             }
+            StateHasChanged();
         }
     }
     private bool hideGuessColorPicker = true;
