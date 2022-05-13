@@ -40,7 +40,12 @@
 
     [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; } = default!;
 
-    private SettingsModel? settingsModel;
+    public Settings()
+    {
+        settingsModel = new SettingsModel(localStorage);
+    }
+
+    private SettingsModel settingsModel;
 
     public enum SortBy
     {
@@ -56,7 +61,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        settingsModel = new SettingsModel(localStorage);
         await settingsModel.LoadFromLocalStorage();
     }
 
