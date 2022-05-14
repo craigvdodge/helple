@@ -61,6 +61,10 @@
 
     protected override async Task OnInitializedAsync()
     {
+        if (settingsModel.LocalStorage == null)
+        {
+            settingsModel.LocalStorage = localStorage;
+        }
         await settingsModel.LoadFromLocalStorage();
     }
 

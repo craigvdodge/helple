@@ -87,6 +87,11 @@ namespace HelpleSharedWeb
         }
 
         private ILocalStorageService _ilss;
+        public ILocalStorageService LocalStorage
+        {
+            get { return _ilss; }
+            set { _ilss = value; }
+        }
     }
 
     public enum SortOrder
