@@ -2,20 +2,30 @@
     width: 100%;
     display: flex;
     justify-content: space-between;
+    background-color: var(--background);
+    color: var(--font-color);
 }
 
 .title-left {
     float: left;
+    background-color: var(--background);
+    color: var(--font-color);
 }
 
 .title {
-    justify-content : center;
+    justify-content: center;
+    background-color: var(--background);
+    color: var(--font-color);
 }
 
 .title-right {
     float: right;
+    background-color: var(--background);
+    color: var(--font-color);
 }
 
 .table {
     width: 100%;
+    background-color: var(--background);
+    color: var(--font-color);
 }

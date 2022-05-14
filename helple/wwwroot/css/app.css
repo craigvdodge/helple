@@ -1,15 +1,82 @@
 ﻿@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 
+@media (prefers-color-scheme: dark) {
+    :root {
+        --background: black;
+        --font-color: white;
+        --highlight: #393939;
+        --highlight-2: #414648;
+        --link: #3ca4ff;  
+    }
+    img {
+        filter: invert(1);
+    }
+}
+
+@media (prefers-color-scheme: light) {
+    :root {
+        /*light theme*/
+        --background: white;
+        --font-color: black;
+        --highlight: #f7f7f7;
+        --highlight-2: #e2e3e5;
+        --link: #0366d6;
+    }
+}
+
+@media (prefers-color-scheme: no-preference) {
+    :root {
+        /*light theme*/
+        --background: white;
+        --font-color: black;
+        --highlight: #f7f7f7;
+        --highlight-2: #e2e3e5;
+        --link: #0366d6;
+    }
+}
+
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background-color: var(--background);
+    color: var(--font-color);
 }
 
 h1:focus {
     outline: none;
 }
+p {
+    background-color: var(--background);
+    color: var(--font-color);
+}
 
 a, .btn-link {
-    color: #0071c1;
+    color: var(--link);
+}
+
+.styled-modal {
+    display: flex;
+    z-index: 102;
+    flex-direction: column;
+    background-color: var(--background);
+    border-radius: 4px;
+    border: 1px solid #fff;
+    padding: 1.5rem;
+    color: var(--font-color);
+}
+
+.alert-secondary{
+    background-color: var(--highlight-2);
+    color: var(--font-color);
+}
+
+.table {
+    background-color: var(--background);
+    color: var(--font-color);
+}
+
+div.main {
+    background-color: var(--background);
+    color: var(--font-color);
 }
 
 .btn-primary {

@@ -93,16 +93,26 @@
 @code {
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
 
-    void ShowHelp() => Modal.Show<Help>("Help");
+    void ShowHelp(){
+        var options = new ModalOptions();
+        options.HideCloseButton = true;
+        options.Class = "styled-modal";
+        Modal.Show<Help>("Help", options);
+    }
     void ShowHamburger()
     {
         var options = new ModalOptions();
         options.Position = ModalPosition.TopLeft;
+        options.Class = "styled-modal";
+        options.HideCloseButton = true;
         Modal.Show<Hamburger>("Links", options);
     }
     async void ShowSettings()
     {
-        var settingsModal = Modal.Show<Settings>("Settings");
+        var options = new ModalOptions();
+        options.HideCloseButton = true;
+        options.Class = "styled-modal";
+        var settingsModal = Modal.Show<Settings>("Settings", options);
         var results = await settingsModal.Result;
         // Get value from modal
         if (!results.Cancelled)
@@ -117,10 +127,9 @@
 
     async void Undo()
     {
-        var options = new ModalOptions()
-        {
-            HideCloseButton = true
-        };
+        var options = new ModalOptions();
+        options.HideCloseButton = true;
+        options.Class = "styled-modal";
         var parameters = new ModalParameters();
 
         // Get Context, pt 1
@@ -197,7 +206,10 @@
         var parameters = new ModalParameters();
         parameters.Add("Letter", l);
 
-        var cc = Modal.Show<ColorCoder>("Letter " + humanReadablePlace.ToString() + ":", parameters);
+        var options = new ModalOptions();
+        options.HideCloseButton = true;
+        options.Class = "styled-modal";
+        var cc = Modal.Show<ColorCoder>("Letter " + humanReadablePlace.ToString() + ":", parameters, options);
         var result = await cc.Result;
 
         if (!result.Cancelled)
@@ -240,10 +252,9 @@
             // Check if that's even in the word list
             if (Wordlist.FirstOrDefault(a => a.Word == Guess) == null)
             {
-                var options = new ModalOptions()
-                {
-                    HideCloseButton = true
-                };
+                var options = new ModalOptions();
+                options.HideCloseButton = true;
+                options.Class = "styled-modal";
                 var parameters = new ModalParameters();
                 parameters.Add("Message", Guess + " is not in word list, continue?");
                 var confirm = Modal.Show<Confirm>("Not found", parameters, options);
